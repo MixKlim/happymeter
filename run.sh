@@ -1,1 +1,1 @@
-python -m uvicorn app:app --reload --port 3000
+python -m uvicorn app:app --reload --port 8000

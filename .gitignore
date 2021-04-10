@@ -127,3 +127,13 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# jupyter stuff
+*.ipynb
+/etc/jupyter
+
+# binaries
+/bin
+
+# shares
+/share

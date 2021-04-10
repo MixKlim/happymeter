@@ -1,29 +1,38 @@
 import uvicorn
 from fastapi import FastAPI
-from model import IrisModel, IrisSpecies
+from model import HappyModel, SurveyMeasurement
 
 # Create app and model objects
 app = FastAPI()
-model = IrisModel()
+model = HappyModel()
 
 
-# Root functionality
 @app.get('/')
 def root():
-    return {"name": "iris flower prediction app"}
+    """
+    Root functionality
+    """
+    return {"name": "happiness prediction app"}
 
 
-# Expose the prediction functionality, make a prediction from the passed
-# JSON data and return the predicted flower species with the confidence
 @app.post('/predict')
-def predict_species(iris: IrisSpecies):
-    data = iris.dict()
-    prediction, probability = model.predict_species(
-        data['sepal_length'], data['sepal_width'], data['petal_length'], data['petal_width']
+def predict_happiness(measurement: SurveyMeasurement):
+    """
+    Expose the prediction functionality, make a prediction from the passed
+    JSON data and return the predicted flower species with the confidence
+    """
+    data = measurement.dict()
+    prediction, probability = model.predict_happiness(
+        data['city_services'], 
+        data['housing_costs'], 
+        data['school_quality'], 
+        data['local_policies'],
+        data['maintenance'],
+        data['social_events']
     )
     return {
-        'prediction': prediction,
-        'probability': probability
+        'prediction': int(prediction),
+        'probability': float(probability)
     }
 
 # Run app on localhost, on port 8000

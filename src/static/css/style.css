@@ -1,0 +1,44 @@
+div.stars {
+  text-align:center;
+  direction:rtl;
+}
+div.stars form {
+  display:inline-block;
+}
+input.star {
+  display: none;
+}
+label.star {
+  display:inline-block;
+  padding: 8px;
+  font-size: 30px;
+  color: #444;
+  transition: all .2s;
+}
+input.star:checked ~ label.star:before {
+  content: '\f005';
+  color: #FD4;
+  transition: all .25s;
+}
+label.star:hover {
+  transform: rotate(-15deg) scale(1.3); 
+}
+label.star:before {
+  content: '\f006';
+  font-family: FontAwesome;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.button {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 20px;
+}

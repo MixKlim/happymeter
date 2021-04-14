@@ -41,4 +41,10 @@ label.star:before {
   text-decoration: none;
   display: inline-block;
   font-size: 20px;
+  transition: 0.7;
+}
+
+.button:hover {
+  background-color: #3e8e41;
+  opacity: 1;
 }

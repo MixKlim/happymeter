@@ -1,0 +1,21 @@
+﻿# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.2.0
+    hooks:
+    -   id: trailing-whitespace
+    -   id: end-of-file-fixer
+    -   id: check-yaml
+    -   id: check-added-large-files
+    -   id: check-ast
+    -   id: check-json
+-   repo: https://gitlab.com/pycqa/flake8
+    rev: 84c95766e679710d9a0fa910a1cd276c87be42c5
+    hooks:
+    -   id: flake8
+-   repo: https://github.com/psf/black
+    rev: 4b7b5ed5b8630a906e2ef3a405134131651a251e
+    hooks:
+    -   id: black
+        language_version: python3.7

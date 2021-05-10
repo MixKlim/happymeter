@@ -1,8 +1,6 @@
-﻿# See https://pre-commit.com for more information
-# See https://pre-commit.com/hooks.html for more hooks
-repos:
+﻿repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.2.0
+    rev: v3.4.0
     hooks:
     -   id: trailing-whitespace
     -   id: end-of-file-fixer
@@ -11,16 +9,12 @@ repos:
     -   id: check-ast
     -   id: check-json
 -   repo: https://gitlab.com/pycqa/flake8
-    rev: 84c95766e679710d9a0fa910a1cd276c87be42c5
+    rev: 3.9.2
     hooks:
     -   id: flake8
--   repo: https://github.com/psf/black
-    rev: 4b7b5ed5b8630a906e2ef3a405134131651a251e
-    hooks:
-    -   id: black
-        language_version: python3.7
+        args: [--ignore=E128, --max-line-length=500]
 -   repo: https://github.com/Lucas-C/pre-commit-hooks-bandit
     rev: v1.0.5
     hooks:
     -   id: python-bandit-vulnerability-check
-        args: [--recursive, clumper]
+        args: [--recursive, happymeter]

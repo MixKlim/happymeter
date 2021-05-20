@@ -12,7 +12,7 @@
     rev: 3.9.2
     hooks:
     -   id: flake8
-        args: [--ignore=E128, --max-line-length=500]
+        args: [--ignore=E128, --max-line-length=500, --exclude=requirements.txt]
 -   repo: https://github.com/Lucas-C/pre-commit-hooks-bandit
     rev: v1.0.5
     hooks:

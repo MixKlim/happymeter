@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <link href="{{ url_for('static', path='/css/style.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', path='/favicon.ico') }}" rel="icon" type="image/x-icon"/>
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
     <title>happymeter</title>
   </head>
@@ -20,7 +21,7 @@
     <h1><font size="5" color="purple">How satisfied are you with the availability of information about the city services?</font></h1>
 
     <div class="stars">
-      <form action="">
+      <form action="" method="POST" id="rating-1">
         <input class="star star-5" id="q1s5" type="radio" name="star"/>
         <label class="star star-5" for="q1s5"></label>
         <input class="star star-4" id="q1s4" type="radio" name="star"/>
@@ -37,7 +38,7 @@
     <h1><font size="5" color="purple">How satisfied are you with the cost of housing?</font></h1>
 
     <div class="stars">
-      <form action="">
+      <form action="" method="POST" id="rating-2">
         <input class="star star-5" id="q2s5" type="radio" name="star"/>
         <label class="star star-5" for="q2s5"></label>
         <input class="star star-4" id="q2s4" type="radio" name="star"/>
@@ -54,7 +55,7 @@
     <h1><font size="5" color="purple">How satisfied are you with the overall quality of public schools?</font></h1>
 
     <div class="stars">
-      <form action="">
+      <form action="" method="POST" id="rating-3">
         <input class="star star-5" id="q3s5" type="radio" name="star"/>
         <label class="star star-5" for="q3s5"></label>
         <input class="star star-4" id="q3s4" type="radio" name="star"/>
@@ -71,7 +72,7 @@
     <h1><font size="5" color="purple">How much do you trust in the local police?</font></h1>
 
     <div class="stars">
-      <form action="">
+      <form action="" method="POST" id="rating-4">
         <input class="star star-5" id="q4s5" type="radio" name="star"/>
         <label class="star star-5" for="q4s5"></label>
         <input class="star star-4" id="q4s4" type="radio" name="star"/>
@@ -87,7 +88,7 @@
 
     <h1><font size="5" color="purple">How much are you satisfied in the maintenance of streets and sidewalks?</font></h1>
 
-    <div class="stars">
+    <div class="stars" method="POST" id="rating-5">
       <form action="">
         <input class="star star-5" id="q5s5" type="radio" name="star"/>
         <label class="star star-5" for="q5s5"></label>
@@ -105,7 +106,7 @@
     <h1><font size="5" color="purple">How much are you satisfied in the availability of social community events?</font></h1>
 
     <div class="stars">
-      <form action="">
+      <form action="" method="POST" id="rating-6">
         <input class="star star-5" id="q6s5" type="radio" name="star"/>
         <label class="star star-5" for="q6s5"></label>
         <input class="star star-4" id="q6s4" type="radio" name="star"/>
@@ -121,7 +122,7 @@
 
     <br />
     <div class="text-center">
-      <button class="button" name="button" value="OK" type="button" onclick="location.href='/predict'">
+      <button class="button" id="button" value="OK" type="button" onclick="location.href='/predict'">
         Submt your ratings
       </button>
       <!-- <script src="{{ url_for('static', path='/js/script.js') }}"></script> -->

@@ -34,7 +34,7 @@ async def root(request: Request):
 async def predict_happiness(measurement: SurveyMeasurement):
     """
     Expose the prediction functionality, make a prediction from the passed
-    JSON data and return the predicted flower species with the confidence
+    JSON data and return the prediction with the confidence
     """
     data = measurement.dict()
     prediction, probability = await model.predict_happiness(

@@ -20,8 +20,8 @@
 
     <h1><font size="5" color="purple">How satisfied are you with the availability of information about the city services?</font></h1>
 
-    <div class="stars">
-      <form action="" method="POST" id="rating-1">
+    <div class="stars" id="test">
+      <form action="" method="POST" id="rating1" onclick="test()">
         <input class="star star-5" id="q1s5" type="radio" name="star"/>
         <label class="star star-5" for="q1s5"></label>
         <input class="star star-4" id="q1s4" type="radio" name="star"/>
@@ -125,8 +125,7 @@
       <button class="button" id="button" value="OK" type="button" onclick="location.href='/predict'">
         Submt your ratings
       </button>
-      <!-- <script src="{{ url_for('static', path='/js/script.js') }}"></script> -->
+      <script src="{{ url_for('static', path='/js/script.js') }}"></script>
     </div>
-
   </body>
 </html>

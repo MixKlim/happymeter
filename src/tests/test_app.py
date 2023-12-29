@@ -1,13 +1,13 @@
-from starlette.testclient import TestClient
+from fastapi.testclient import TestClient
 
 from app.app import app
 
 client = TestClient(app)
 
-# def test_root():
-#     resp = client.get("/")
-#     assert resp.status_code == 200
-#     assert resp.json() == {"name": "happiness prediction app"}
+
+def test_root() -> None:
+    response = client.get("/")
+    assert response.status_code == 200
 
 
 def test_predict() -> None:

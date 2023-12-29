@@ -54,7 +54,7 @@ class HappyModel:
             subsample=1.0,
             random_state=42,
         )
-        model = gfc.fit(X, y)
+        model = gfc.fit(X.values, y.values)
         return model
 
     async def predict_happiness(

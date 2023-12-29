@@ -25,7 +25,7 @@ async def root(request: Request) -> Jinja2Templates.TemplateResponse:
     """
     Main page for ratings
     """
-    return templates.TemplateResponse("index.html", context={"request": request})
+    return templates.TemplateResponse(request=request, name="index.html")
 
 
 @app.post("/predict")

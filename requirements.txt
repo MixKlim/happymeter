@@ -97,7 +97,6 @@ python-dateutil==2.8.2
 python-pptx==0.6.21
 pytz==2023.3.post1
 pytz-deprecation-shim==0.1.0.post0
-pywin32==306
 pywinpty==2.0.5
 PyYAML==6.0.1
 qtconsole==5.2.2

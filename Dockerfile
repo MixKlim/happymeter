@@ -1,14 +1,13 @@
-FROM python:3.8-slim
-
-COPY ./src /happymeter/src
-COPY ./requirements.txt /happymeter
+FROM python:3.10-slim
 
 WORKDIR /happymeter
 
-RUN pip3 install -r requirements.txt
+COPY ./requirements.txt .
 
-WORKDIR /happymeter/src/app
+RUN pip3 install --no-cache-dir --upgrade -r requirements.txt
 
-EXPOSE 8000
+COPY src/ .
 
-CMD ["uvicorn", "app:app", "--host=127.0.0.1", "--reload"]
+EXPOSE 8080
+
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8080"]

@@ -24,19 +24,20 @@ class HappyModel:
     Class for training the model and making predictions
     """
 
-    def __init__(self) -> None:
+    def __init__(self, data_fname: str = "happy_data.csv", model_fname: str = "happy_model.pkl") -> None:
         """
         Class constructor, loads the dataset and loads the model
         if exists. If not, calls the _train_model method and
         saves the model
         """
-        self.df = pd.read_csv(Path(__file__).resolve().parent / "happy_data.csv")
-        self.model_fname_ = "happy_model.pkl"
+        self.df_fname_ = data_fname
+        self.df = pd.read_csv(Path(__file__).resolve().parent.parent / "data" / self.df_fname_)
+        self.model_fname_ = model_fname
         try:
-            self.model = joblib.load(Path(__file__).resolve().parent / self.model_fname_)
+            self.model = joblib.load(Path(__file__).resolve().parent.parent / "model" / self.model_fname_)
         except Exception:
             self.model = self._train_model()
-            joblib.dump(self.model, self.model_fname_)
+            joblib.dump(self.model, Path(__file__).resolve().parent.parent / "model" / self.model_fname_)
 
     def _train_model(self) -> GradientBoostingClassifier:
         """

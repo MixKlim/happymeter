@@ -1,12 +1,14 @@
 FROM python:3.10-slim
 
-WORKDIR /happymeter
+RUN mkdir /fastapi
 
-COPY ./requirements.txt .
+COPY ../../requirements.txt /fastapi
+
+WORKDIR /fastapi
 
 RUN pip3 install --no-cache-dir --upgrade -r requirements.txt
 
-COPY src/ .
+COPY . /fastapi
 
 EXPOSE 8080
 

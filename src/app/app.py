@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -20,7 +21,7 @@ templates = Jinja2Templates(directory=Path(__file__).resolve().parent.parent.abs
 
 
 @app.get("/")
-async def root(request: Request) -> Jinja2Templates.TemplateResponse:
+async def root(request: Request) -> None:
     """
     Main page for ratings
     """
@@ -33,7 +34,7 @@ async def predict_happiness(measurement: SurveyMeasurement) -> dict:
     Expose the prediction functionality, make a prediction from the passed
     JSON data and return the prediction with the confidence
     """
-    data = measurement.model_dump()
+    data = measurement.dict()
     prediction, probability = await model.predict_happiness(
         data["city_services"],
         data["housing_costs"],
@@ -43,3 +44,7 @@ async def predict_happiness(measurement: SurveyMeasurement) -> dict:
         data["social_events"],
     )
     return {"prediction": int(prediction), "probability": float(probability)}
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="127.0.0.1", port=8000)

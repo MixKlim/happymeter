@@ -1,3 +1,14 @@
+[project]
+name = "happymeter"
+version = "1.0.0"
+description = "Find out how happy you are"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {file = "LICENSE"}
+authors = [
+  {name = "K. Mikhailov", email = "mixklim@gmail.com" }
+]
+
 [build-system]
 requires = ["setuptools", "wheel", "pip-tools"]
 build-backend = "setuptools.build_meta"

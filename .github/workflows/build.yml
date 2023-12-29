@@ -42,3 +42,8 @@ jobs:
           name: pytest-results-${{ env.PYTHON_VERSION }}
           path: junit/test-results-${{ env.PYTHON_VERSION }}.xml
         if: ${{ always() }}
+
+      # - name: Publish package
+      #   uses: pypa/gh-action-pypi-publish@v1
+      #   with:
+      #     password: ${{ secrets.PYPI_API_TOKEN }}

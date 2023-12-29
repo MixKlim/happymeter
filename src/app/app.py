@@ -1,6 +1,5 @@
 from pathlib import Path
 
-import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -44,8 +43,3 @@ async def predict_happiness(measurement: SurveyMeasurement) -> dict:
         data["social_events"],
     )
     return {"prediction": int(prediction), "probability": float(probability)}
-
-
-# Run app on localhost, on port 8080
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8080)

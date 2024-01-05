@@ -23,6 +23,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install -r requirements.backend.txt
+          python -m pip install -r requirements.frontend.txt
           python -m pip install -r requirements.dev.txt
 
       - name: Format code using black and lint with flake8

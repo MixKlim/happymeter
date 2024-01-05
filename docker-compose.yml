@@ -1,23 +1,27 @@
-version: "3"
-
 services:
-  fastapi:
-    build: fastapi/
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: backend-container
     ports:
       - 8080:8080
     networks:
       - deploy_network
-    container_name: fastapi
 
-  streamlit:
-    build: streamlit/
-    depends_on:
-      - fastapi
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: frontend-container
     ports:
-      - 8088:8088
+      - 8501:8501
+    environment:
+      - LOCAL=False
     networks:
       - deploy_network
-    container_name: streamlit
+    depends_on:
+      - backend
 
 networks:
   deploy_network:

@@ -4,4 +4,4 @@ backgroundColor="#c7902b"
 textColor="#800080"
 font="sans serif"
 [server]
-port = 8088
+port = 8501

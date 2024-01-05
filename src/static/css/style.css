@@ -1,3 +1,15 @@
+body {
+  font-size: 18px; /* Default font size for the entire body */
+}
+
+h1 {
+  font-size: 28px; /* Font size for h1 headers */
+}
+
+p {
+  font-size: 16px; /* Font size for paragraphs */
+}
+
 div.stars {
   text-align:center;
   direction:rtl;
@@ -47,4 +59,11 @@ label.star:before {
 .button:hover {
   background-color: #3e8e41;
   opacity: 1;
+}
+
+.streamlit-button {
+  background-color: #3e8e41; /* Set your desired color code */
+  color: white; /* Set text color */
+  padding: 15px 32px; /* Adjust padding */
+  border-radius: 5px; /* Optional: Add rounded corners */
 }

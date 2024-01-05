@@ -1,0 +1,28 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: backend-container
+    ports:
+      - 8080:8080
+    networks:
+      - deploy_network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: frontend-container
+    ports:
+      - 8501:8501
+    environment:
+      - REMOTE=True
+    networks:
+      - deploy_network
+    depends_on:
+      - backend
+
+networks:
+  deploy_network:
+    driver: bridge

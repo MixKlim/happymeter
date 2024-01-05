@@ -8,7 +8,7 @@ from fastapi.templating import Jinja2Templates
 from src.app.model import HappyModel, SurveyMeasurement
 
 # Create app and model objects
-app = FastAPI()
+app = FastAPI(title="Happiness Prediction", version="1.0", description="Find out how happy you are")
 
 app.mount(
     "/static",

@@ -1,0 +1,2 @@
+st-star-rating==0.0.6
+streamlit==1.29.0

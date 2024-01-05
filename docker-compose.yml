@@ -17,7 +17,7 @@ services:
     ports:
       - 8501:8501
     environment:
-      - LOCAL=False
+      - REMOTE=True
     networks:
       - deploy_network
     depends_on:

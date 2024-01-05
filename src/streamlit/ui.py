@@ -6,12 +6,17 @@ from streamlit_star_rating import st_star_rating
 
 import streamlit as st
 
+# Page configuration
+st.set_page_config("happymeter", page_icon=":blush:")
+
 # Check whether local deployment or not
-local_deployment = os.getenv("LOCAL", "True")
-if local_deployment == "True":
-    backend_host = "localhost"
-else:
+remote_deployment = os.getenv("REMOTE", "")
+print(f"remote: {remote_deployment}")
+if bool(remote_deployment):
     backend_host = "backend"
+else:
+    backend_host = "localhost"
+print(f"backend host: {backend_host}")
 
 # Custom size options
 star_rating_size = 25

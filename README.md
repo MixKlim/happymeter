@@ -1,4 +1,4 @@
-# happymeter
+# happymeter :blush:
 
 [![Build](https://github.com/mixklim/happymeter/actions/workflows/build.yml/badge.svg)](https://github.com/mixklim/happymeter/actions/workflows/build.yml)
 

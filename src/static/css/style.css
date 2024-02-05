@@ -9,6 +9,9 @@ h1 {
 p {
   font-size: 16px; /* Font size for paragraphs */
 }
+.class-of-divs{
+  min-width: 100%
+}
 
 div.stars {
   text-align:center;

@@ -20,8 +20,8 @@
 
     <h1><font size="5" color="purple">How satisfied are you with the availability of information about the city services?</font></h1>
 
-    <div class="stars" id="test">
-      <form action="" method="POST" id="rating1" onclick="test()">
+    <div class="stars">
+      <form action="" method="POST" id="city_services" name="city_services">
         <input class="star star-5" id="q1s5" type="radio" name="star"/>
         <label class="star star-5" for="q1s5"></label>
         <input class="star star-4" id="q1s4" type="radio" name="star"/>
@@ -38,7 +38,7 @@
     <h1><font size="5" color="purple">How satisfied are you with the cost of housing?</font></h1>
 
     <div class="stars">
-      <form action="" method="POST" id="rating-2">
+      <form action="" method="POST" id="housing_costs" name="housing_costs">
         <input class="star star-5" id="q2s5" type="radio" name="star"/>
         <label class="star star-5" for="q2s5"></label>
         <input class="star star-4" id="q2s4" type="radio" name="star"/>
@@ -55,7 +55,7 @@
     <h1><font size="5" color="purple">How satisfied are you with the overall quality of public schools?</font></h1>
 
     <div class="stars">
-      <form action="" method="POST" id="rating-3">
+      <form action="" method="POST" id="school_quality" name="school_quality">
         <input class="star star-5" id="q3s5" type="radio" name="star"/>
         <label class="star star-5" for="q3s5"></label>
         <input class="star star-4" id="q3s4" type="radio" name="star"/>
@@ -72,7 +72,7 @@
     <h1><font size="5" color="purple">How much do you trust in the local police?</font></h1>
 
     <div class="stars">
-      <form action="" method="POST" id="rating-4">
+      <form action="" method="POST" id="local_policies" name="local_policies">
         <input class="star star-5" id="q4s5" type="radio" name="star"/>
         <label class="star star-5" for="q4s5"></label>
         <input class="star star-4" id="q4s4" type="radio" name="star"/>
@@ -88,8 +88,8 @@
 
     <h1><font size="5" color="purple">How much are you satisfied in the maintenance of streets and sidewalks?</font></h1>
 
-    <div class="stars" method="POST" id="rating-5">
-      <form action="">
+    <div class="stars">
+      <form action="" method="POST" id="maintenance" name="maintenance">
         <input class="star star-5" id="q5s5" type="radio" name="star"/>
         <label class="star star-5" for="q5s5"></label>
         <input class="star star-4" id="q5s4" type="radio" name="star"/>
@@ -106,7 +106,7 @@
     <h1><font size="5" color="purple">How much are you satisfied in the availability of social community events?</font></h1>
 
     <div class="stars">
-      <form action="" method="POST" id="rating-6">
+      <form action="" method="POST" id="social_events" name="social_events">
         <input class="star star-5" id="q6s5" type="radio" name="star"/>
         <label class="star star-5" for="q6s5"></label>
         <input class="star star-4" id="q6s4" type="radio" name="star"/>
@@ -122,10 +122,13 @@
 
     <br />
     <div class="text-center">
-      <button class="button" id="button" value="OK" type="button" onclick="location.href='/predict'">
+      <button type="button" class="button" id="button" onclick="location.href='predict';">
         Submt your ratings
       </button>
-      <script src="{{ url_for('static', path='/js/script.js') }}"></script>
+    <script src="{{ url_for('static', path='/js/script.js') }}"></script>
     </div>
+
+    <br />
+    <div id="results"></div>
   </body>
 </html>

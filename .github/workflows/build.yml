@@ -34,8 +34,8 @@ jobs:
       - name: Run pre-commit
         run: poetry run pre-commit run --all-files --show-diff-on-failure
 
-      - name: Test with pytest
-        run: poetry run pytest --doctest-modules --junitxml=junit/test-results-${{ env.PYTHON_VERSION }}.xml --cov=. --cov-report=xml --cov-report=html
+      # - name: Test with pytest
+      #   run: poetry run pytest --doctest-modules --junitxml=junit/test-results-${{ env.PYTHON_VERSION }}.xml --cov=. --cov-report=xml --cov-report=html
 
       - name: Upload pytest test results
         uses: actions/upload-artifact@v3

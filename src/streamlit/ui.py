@@ -31,7 +31,10 @@ def main() -> None:
     st.title("Find out how happy you are with your living situation :blush:")
 
     rating_text_1 = "How satisfied are you with the availability of information about the city services?"
-    st.write(f"<b><span style='font-size: {text_font_size}px;'>{rating_text_1}</span></b>", unsafe_allow_html=True)
+    st.write(
+        f"<b><span style='font-size: {text_font_size}px;'>{rating_text_1}</span></b>",
+        unsafe_allow_html=True,
+    )
 
     col1, col2, col3 = st.columns(3)
 
@@ -51,7 +54,10 @@ def main() -> None:
         )
 
     rating_text_2 = "How satisfied are you with the cost of housing?"
-    st.write(f"<b><span style='font-size: {text_font_size}px;'>{rating_text_2}</span></b>", unsafe_allow_html=True)
+    st.write(
+        f"<b><span style='font-size: {text_font_size}px;'>{rating_text_2}</span></b>",
+        unsafe_allow_html=True,
+    )
 
     col1, col2, col3 = st.columns(3)
 
@@ -70,7 +76,10 @@ def main() -> None:
         )
 
     rating_text_3 = "How satisfied are you with the overall quality of public schools?"
-    st.write(f"<b><span style='font-size: {text_font_size}px;'>{rating_text_3}</span></b>", unsafe_allow_html=True)
+    st.write(
+        f"<b><span style='font-size: {text_font_size}px;'>{rating_text_3}</span></b>",
+        unsafe_allow_html=True,
+    )
 
     col1, col2, col3 = st.columns(3)
 
@@ -89,7 +98,10 @@ def main() -> None:
         )
 
     rating_text_4 = "How much do you trust in the local police?"
-    st.write(f"<b><span style='font-size: {text_font_size}px;'>{rating_text_4}</span></b>", unsafe_allow_html=True)
+    st.write(
+        f"<b><span style='font-size: {text_font_size}px;'>{rating_text_4}</span></b>",
+        unsafe_allow_html=True,
+    )
 
     col1, col2, col3 = st.columns(3)
 
@@ -107,8 +119,13 @@ def main() -> None:
             dark_theme=True,
         )
 
-    rating_text_5 = "How much are you satisfied in the maintenance of streets and sidewalks?"
-    st.write(f"<b><span style='font-size: {text_font_size}px;'>{rating_text_5}</span></b>", unsafe_allow_html=True)
+    rating_text_5 = (
+        "How much are you satisfied in the maintenance of streets and sidewalks?"
+    )
+    st.write(
+        f"<b><span style='font-size: {text_font_size}px;'>{rating_text_5}</span></b>",
+        unsafe_allow_html=True,
+    )
 
     col1, col2, col3 = st.columns(3)
 
@@ -126,8 +143,13 @@ def main() -> None:
             dark_theme=True,
         )
 
-    rating_text_6 = "How much are you satisfied in the availability of social community events?"
-    st.write(f"<b><span style='font-size: {text_font_size}px;'>{rating_text_6}</span></b>", unsafe_allow_html=True)
+    rating_text_6 = (
+        "How much are you satisfied in the availability of social community events?"
+    )
+    st.write(
+        f"<b><span style='font-size: {text_font_size}px;'>{rating_text_6}</span></b>",
+        unsafe_allow_html=True,
+    )
 
     col1, col2, col3 = st.columns(3)
 
@@ -173,9 +195,13 @@ def main() -> None:
         prediction = response_dict["prediction"]
         probabilty = response_dict["probability"]
         if prediction:
-            st.success(f"Good news - you are happy! We're {probabilty:.0%} sure :grinning:")
+            st.success(
+                f"Good news - you are happy! We're {probabilty:.0%} sure :grinning:"
+            )
         else:
-            st.error(f"Oh no, you seem to be unhappy! At least for {probabilty:.0%} :worried:")
+            st.error(
+                f"Oh no, you seem to be unhappy! At least for {probabilty:.0%} :worried:"
+            )
 
 
 if __name__ == "__main__":

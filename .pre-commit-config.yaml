@@ -26,7 +26,6 @@
   hooks:
   -   id: poetry-check
   -   id: poetry-lock
-  -   id: poetry-export
   -   id: poetry-install
 
 - repo: https://github.com/astral-sh/ruff-pre-commit

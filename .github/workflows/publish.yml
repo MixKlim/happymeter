@@ -11,9 +11,12 @@ permissions:
   contents: read
 
 jobs:
-  deploy:
+  publish:
     name: Upload release to PyPI
     runs-on: ubuntu-latest
+    environment:
+      name: happymeter
+      url: https://pypi.org/project/happymeter/
     permissions:
       id-token: write
     steps:

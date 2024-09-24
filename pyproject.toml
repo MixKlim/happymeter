@@ -6,7 +6,7 @@ authors = ["Klim Mikhailov <mixklim@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 package-mode = true
-packages = [{ include = "src/app" }]
+packages = [{ include = "app", from = "src" }]
 
 [tool.poetry.dependencies]
 python = ">=3.10"

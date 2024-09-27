@@ -11,9 +11,9 @@ ML model based on [Somerville Happiness Survey Data Set](https://archive.ics.uci
 - create virtual environment: `python -m venv .venv`
 - install dependencies: `poetry install --no-root`
 - launch backend:
-  `poetry run uvicorn src.app.app:app --port=8080 --reload`
+  `poetry run uvicorn src.app.main:app --port=8080 --reload`
 - launch front-end:
-  `poetry run streamlit run src\streamlit\ui.py --server.port 8501`
+  `poetry run streamlit run src/streamlit/ui.py --server.port 8501`
 - pre-commit: `poetry run pre-commit run --all-files`
 - unit tests: `poetry run pytest`
 - docker backend:

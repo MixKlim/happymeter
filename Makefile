@@ -4,7 +4,7 @@ backend:
 
 frontend:
 	@echo "Running frontend"
-	poetry run streamlit run src/streamlit/ui.py --server.port 8501	
+	poetry run streamlit run src/streamlit/ui.py --server.port 8501
 
 eval:
 	@echo "Running pre-commit"

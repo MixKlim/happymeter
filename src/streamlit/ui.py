@@ -43,9 +43,7 @@ def main() -> None:
     text_font_size = 18
 
     # Use custom CSS to set a maximum width
-    with open(
-        "C:\\Users\\K.Mikhailov\\Documents\\happymeter\\src\\static\\css\\style.css"
-    ) as f:
+    with open("src/static/css/style.css") as f:
         css = f.read()
 
     st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)

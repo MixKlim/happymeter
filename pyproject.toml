@@ -24,6 +24,7 @@ pytest-mock = "^3.14.0"
 requests-mock = "^1.12.1"
 pytest-asyncio = "^0.24.0"
 ipykernel = "^6.29.5"
+genbadge = {extras = ["coverage"], version = "^1.1.1"}
 
 
 [tool.poetry.group.frontend.dependencies]

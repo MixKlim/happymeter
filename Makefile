@@ -1,3 +1,5 @@
+SHELL=CMD
+
 backend:
 	@echo "Running backend"
 	poetry run uvicorn src.app.main:app --port=8080 --reload
@@ -13,6 +15,14 @@ eval:
 test:
 	@echo "Running unit test"
 	poetry run pytest --doctest-modules --cov=. --cov-report=html
+
+cov:
+	@echo "Creating coverage badge"
+	coverage report
+	coverage xml -o ./reports/coverage/coverage.xml
+	coverage html
+	genbadge coverage --output-file reports/coverage/coverage-badge.svg
+
 
 docker-backend:
 	@echo "Creating docker image and container for backend"

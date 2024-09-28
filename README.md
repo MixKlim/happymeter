@@ -21,7 +21,7 @@ ML model based on [Somerville Happiness Survey Data Set](https://archive.ics.uci
   - `coverage report`
   - `coverage xml -o ./reports/coverage/coverage.xml`
   - `coverage html`
-  - `mv htmlcov/index.html reports/coverage`
+  - `move /y .\htmlcov\index.html .\reports\coverage`
   - `genbadge coverage --output-file reports/coverage/coverage-badge.svg`
 - docker backend:
   - `docker build -t backend-image -f Dockerfile.backend .`

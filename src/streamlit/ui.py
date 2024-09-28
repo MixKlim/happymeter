@@ -7,23 +7,45 @@ from streamlit_star_rating import st_star_rating
 import streamlit as st
 
 
+def get_backend_host() -> str:
+    """Check whether local deployment or not."""
+    remote_deployment = os.getenv("REMOTE", "")
+    if bool(remote_deployment):
+        return "backend"
+    else:
+        return "localhost"
+
+
+def predict(data: dict, predict_button: bool) -> None:
+    """Display proper message based on model prediction."""
+    if predict_button:
+        response = requests.post(f"http://{get_backend_host()}:8080/predict", json=data)
+        response_dict = json.loads(response.text)
+        prediction = response_dict["prediction"]
+        probability = response_dict["probability"]
+
+        if prediction:
+            st.success(
+                f"Good news - you are happy! We're {probability:.0%} sure :grinning:"
+            )
+        else:
+            st.error(
+                f"Oh no, you seem to be unhappy! At least for {probability:.0%} :worried:"
+            )
+
+
 def main() -> None:
     # Page configuration
     st.set_page_config("happymeter", page_icon=":blush:")
-
-    # Check whether local deployment or not
-    remote_deployment = os.getenv("REMOTE", "")
-    if bool(remote_deployment):
-        backend_host = "backend"
-    else:
-        backend_host = "localhost"
 
     # Custom size options
     star_rating_size = 25
     text_font_size = 18
 
     # Use custom CSS to set a maximum width
-    with open("src/static/css/style.css") as f:
+    with open(
+        "C:\\Users\\K.Mikhailov\\Documents\\happymeter\\src\\static\\css\\style.css"
+    ) as f:
         css = f.read()
 
     st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
@@ -189,19 +211,7 @@ def main() -> None:
     with col3:
         predict_button = st.button(label="Submit your ratings")
 
-    if predict_button:
-        response = requests.post(f"http://{backend_host}:8080/predict", json=data)
-        response_dict = json.loads(response.text)
-        prediction = response_dict["prediction"]
-        probabilty = response_dict["probability"]
-        if prediction:
-            st.success(
-                f"Good news - you are happy! We're {probabilty:.0%} sure :grinning:"
-            )
-        else:
-            st.error(
-                f"Oh no, you seem to be unhappy! At least for {probabilty:.0%} :worried:"
-            )
+    predict(data, predict_button)
 
 
 if __name__ == "__main__":

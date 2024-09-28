@@ -12,7 +12,7 @@ eval:
 
 test:
 	@echo "Running unit test"
-	poetry run pytest
+	poetry run pytest --doctest-modules --cov=. --cov-report=html
 
 docker-backend:
 	@echo "Creating docker image and container for backend"

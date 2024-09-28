@@ -130,6 +130,7 @@ class HappyModel:
                 social_events,
             ]
         ]
+
         prediction = self.model.predict(data_in)
         probability = self.model.predict_proba(data_in).max()
         return prediction[0], probability

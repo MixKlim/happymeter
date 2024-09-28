@@ -23,6 +23,7 @@ cov:
 	coverage html
 	genbadge coverage --output-file reports/coverage/coverage-badge.svg
 
+build: eval test cov
 
 docker-backend:
 	@echo "Creating docker image and container for backend"

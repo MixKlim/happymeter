@@ -6,6 +6,7 @@ on:
 
 env:
   PYTHON_VERSION: "3.11"
+  POETRY_VERSION: "1.8.2"
 
 permissions:
   contents: read
@@ -29,8 +30,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install Poetry
-        run: |
-          curl -sSL https://install.python-poetry.org | python - -y
+        run: curl -sSL https://install.python-poetry.org | python - --version ${{ env.POETRY_VERSION }} -y
 
       - name: Update PATH
         run: echo "$HOME/.local/bin" >> $GITHUB_PATH

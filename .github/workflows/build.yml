@@ -20,7 +20,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install Poetry
-        run: python -m pip install poetry==${{ env.POETRY_VERSION }}
+        run: curl -sSL https://install.python-poetry.org | python - --version ${{ env.POETRY_VERSION }} -y
 
       - name: Update PATH
         run: echo "$HOME/.local/bin" >> $GITHUB_PATH

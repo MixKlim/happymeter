@@ -1,79 +1,104 @@
-window.onload = function() {
+window.onload = () => {
+    const button = document.getElementById("button");
 
-    let button = document.getElementById("button")
-    button.onclick = () => {
+    button.onclick = async () => {
+        const body = {
+            city_services: countCheckboxes("city_services"),
+            housing_costs: countCheckboxes("housing_costs"),
+            school_quality: countCheckboxes("school_quality"),
+            local_policies: countCheckboxes("local_policies"),
+            maintenance: countCheckboxes("maintenance"),
+            social_events: countCheckboxes("social_events"),
+        };
 
-        var city_services = count_checkboxes("city_services")
-        var housing_costs = count_checkboxes("housing_costs")
-        var school_quality = count_checkboxes("school_quality")
-        var local_policies = count_checkboxes("local_policies")
-        var maintenance = count_checkboxes("maintenance")
-        var social_events = count_checkboxes("social_events")
-
-        var body = {
-            city_services: city_services,
-            housing_costs: housing_costs,
-            school_quality: school_quality,
-            local_policies: local_policies,
-            maintenance: maintenance,
-            social_events: social_events
+        if (Object.values(body).some(value => value === 0)) {
+            displayError("Not all questions are answered. <br> Please answer all questions before submitting.");
+            return;
         }
 
-        fetch("http://localhost:8080/predict", {
-            method: "POST",
-            body: JSON.stringify(body),
-            headers: {
-                "Content-type": "application/json; charset=UTF-8"
-                }
-            }
-        )
-        .then(response => response.json())
-        .then(json => result = json)
-        .then(() => {
-            percentage = (100 * result.probability).toFixed(0)
-            if (result.prediction) {
-                results.innerHTML = `
-                <div class="card">
-                <h2><font size="5" color="green">Good news - you are happy! We're ${percentage}% sure &#128512;</font></h2>
-                </div>
-            `;
-            } else {
-                results.innerHTML = `
-                <div class="card">
-                <h2><font size="5" color="red">Oh no, you seem to be unhappy! At least for ${percentage}% &#128543;</font></h2>
-                </div>
-            `;
+        try {
+            const response = await fetch("http://localhost:8080/predict", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json; charset=UTF-8",
+                },
+                body: JSON.stringify(body),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            });
+            const result = await response.json();
+            displayResults(result);
+        } catch (error) {
+            console.error("Error fetching prediction:", error);
+            displayError("An error occurred while processing your request. <br> Please try again later.");
+        }
+    };
+};
+
+function countCheckboxes(elementId) {
+    const container = document.getElementById(elementId);
+    if (!container) {
+        console.warn(`Element with id '${elementId}' not found.`);
+        return 0;
     }
+
+    const checkedStars = Array.from(container.children)
+        .filter(el => el.checked && el.classList.contains("star"))
+        .map(el => parseInt(el.className.split("-")[1], 10));
+
+    return checkedStars.length > 0 ? checkedStars[0] : 0;
 }
 
-function count_checkboxes(elementId){
-    boxes = document.getElementById(elementId)
-    var stars = 0;
-    for (let element of boxes.children) {
-        if(element.className == "star star-5" && element.checked){
-            stars = 5;
-            break;
-        }
-        if(element.className == "star star-4" && element.checked){
-            stars = 4;
-            break;
-        }
-        if(element.className == "star star-3" && element.checked){
-            stars = 3;
-            break;
-        }
-        if(element.className == "star star-2" && element.checked){
-            stars = 2;
-            break;
-        }
-        if(element.className == "star star-1" && element.checked){
-            stars = 1;
-            break;
-        }
+function displayResults(result) {
+    const percentage = (100 * result.probability).toFixed(0);
+    const popup = createPopup(result);
 
-    };
-    return stars;
+    popup.innerHTML = `
+        <div class="popup-card">
+            <h2 style="color:${result.prediction ? "green" : "red"};">
+                ${result.prediction ?
+                    `Good news - you are happy! We're ${percentage}% sure &#128512;` :
+                    `Oh no, you seem to be unhappy! At least for ${percentage}% &#128543;`
+                }
+            </h2>
+            <button id="close-popup">Close</button>
+        </div>
+    `;
+
+    document.body.appendChild(popup);
+    document.getElementById("close-popup").onclick = () => popup.remove();
+}
+
+function displayError(message) {
+    const popup = createPopup();
+
+    popup.innerHTML = `
+        <div class="popup-card">
+            <h2 style="color:red;">
+                ${message}
+            </h2>
+            <button id="close-popup">Close</button>
+        </div>
+    `;
+
+    document.body.appendChild(popup);
+    document.getElementById("close-popup").onclick = () => popup.remove();
+}
+
+function createPopup(result = null) {
+    const popup = document.createElement("div");
+    popup.style.position = "fixed";
+    popup.style.top = "50%";
+    popup.style.left = "50%";
+    popup.style.transform = "translate(-50%, -50%)";
+    popup.style.backgroundColor = "#FD4";
+    popup.style.border = "1px solid #ccc";
+    popup.style.padding = "20px";
+    popup.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.2)";
+    popup.style.zIndex = "1000";
+    popup.style.width = "800px";
+    return popup;
 }

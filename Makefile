@@ -1,5 +1,16 @@
 SHELL=CMD
 
+help:
+	@echo "  backend           - Run the backend using uvicorn"
+	@echo "  frontend          - Run the frontend using Streamlit"
+	@echo "  eval              - Run pre-commit checks on all files"
+	@echo "  test              - Run unit tests with pytest"
+	@echo "  cov               - Generate coverage report and badge"
+	@echo "  build             - Evaluate code, run tests, and generate coverage"
+	@echo "  docker-backend    - Create and run Docker container for backend"
+	@echo "  docker-frontend   - Create and run Docker container for frontend"
+	@echo "  docker-compose    - Build and run services using Docker Compose"
+
 backend:
 	@echo "Running backend"
 	poetry run uvicorn src.app.main:app --port=8080 --reload

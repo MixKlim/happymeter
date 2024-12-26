@@ -10,7 +10,7 @@ def test_backend_host_local() -> None:
     # Clear the environment variable for the test
     os.environ.pop("REMOTE", None)
 
-    assert get_backend_host() == "localhost"
+    assert get_backend_host() == "127.0.0.1"
 
 
 def test_backend_host_remote() -> None:

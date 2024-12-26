@@ -13,7 +13,7 @@ def get_backend_host() -> str:
     if bool(remote_deployment):
         return "backend"
     else:
-        return "localhost"
+        return "127.0.0.1"
 
 
 def predict(data: dict, predict_button: bool) -> None:

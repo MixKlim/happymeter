@@ -1,28 +1,50 @@
 body {
-  font-size: 18px; /* Default font size for the entire body */
+  background-color: rgb(199, 144, 43);
+  font-size: 18px;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, p, div {
+  text-align: center;
 }
 
 h1 {
-  font-size: 28px; /* Font size for h1 headers */
+  font-size: 30px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  color: purple;
 }
 
-p {
-  font-size: 16px; /* Font size for paragraphs */
-}
-.class-of-divs{
-  min-width: 100%
+h2 {
+  font-size: 25px;
+  margin-bottom: 5px;
+  color: purple;
 }
 
 div.stars {
   text-align:center;
   direction:rtl;
 }
+
 div.stars form {
   display:inline-block;
 }
+
+form {
+  margin: 0;
+}
+
 input.star {
   display: none;
 }
+
+input.star:checked ~ label.star:before {
+  content: '\f005';
+  color: #FD4;
+  transition: all .25s;
+}
+
 label.star {
   display:inline-block;
   padding: 8px;
@@ -30,32 +52,29 @@ label.star {
   color: #444;
   transition: all .2s;
 }
-input.star:checked ~ label.star:before {
-  content: '\f005';
-  color: #FD4;
-  transition: all .25s;
-}
+
 label.star:hover {
   transform: rotate(-15deg) scale(1.3);
 }
+
 label.star:before {
   content: '\f006';
   font-family: FontAwesome;
 }
 
-.text-center {
-  text-align: center;
+p {
+  font-size: 10px;
 }
 
 .button {
-  background-color: #4CAF50; /* Green */
+  background-color: #4CAF50;
   border: none;
   color: white;
-  padding: 15px 32px;
+  padding: 10px 10px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 20px;
+  font-size: 0.8em;
   transition: 0.7;
 }
 
@@ -64,9 +83,27 @@ label.star:before {
   opacity: 1;
 }
 
+.class-of-divs{
+  min-width: 100%
+}
+
+.stars {
+  margin-bottom: -3px;
+}
+
 .streamlit-button {
   background-color: #3e8e41; /* Set your desired color code */
   color: white; /* Set text color */
   padding: 15px 32px; /* Adjust padding */
   border-radius: 5px; /* Optional: Add rounded corners */
+}
+
+.text-center {
+  text-align: center;
+  margin-top: -10px;
+  margin-bottom: 1px;
+}
+
+#results {
+  margin-top: -5px;
 }

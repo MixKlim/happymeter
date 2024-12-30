@@ -60,11 +60,11 @@ function displayResults(result) {
         <div class="popup-card">
             <h2 style="color:${result.prediction ? "green" : "red"};">
                 ${result.prediction ?
-                    `Good news - you are happy! We're ${percentage}% sure &#128512;` :
-                    `Oh no, you seem to be unhappy! At least for ${percentage}% &#128543;`
+                    `Good news - you are happy! We're ${percentage}% sure 😃` :
+                    `Oh no, you seem to be unhappy! At least for ${percentage}% 😟`
                 }
             </h2>
-            <button id="close-popup">Close</button>
+            <button class="close-popup" id="close-popup">Close</button>
         </div>
     `;
 

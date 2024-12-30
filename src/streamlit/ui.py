@@ -1,215 +1,115 @@
-import json
 import os
-
 import requests
-from streamlit_star_rating import st_star_rating
-
 import streamlit as st
+from streamlit_star_rating import st_star_rating
 
 
 def get_backend_host() -> str:
     """Check whether local deployment or not."""
     remote_deployment = os.getenv("REMOTE", "")
-    if bool(remote_deployment):
-        return "backend"
-    else:
-        return "127.0.0.1"
+    return "backend" if bool(remote_deployment) else "127.0.0.1"
 
 
 def predict(data: dict, predict_button: bool) -> None:
     """Display proper message based on model prediction."""
     if predict_button:
-        response = requests.post(f"http://{get_backend_host()}:8080/predict", json=data)
-        response_dict = json.loads(response.text)
-        prediction = response_dict["prediction"]
-        probability = response_dict["probability"]
+        try:
+            response = requests.post(
+                f"http://{get_backend_host()}:8080/predict", json=data
+            )
+            response.raise_for_status()
+            response_dict = response.json()
+            prediction = response_dict["prediction"]
+            probability = response_dict["probability"]
 
-        if prediction:
-            st.success(
-                f"Good news - you are happy! We're {probability:.0%} sure :grinning:"
-            )
-        else:
-            st.error(
-                f"Oh no, you seem to be unhappy! At least for {probability:.0%} :worried:"
-            )
+            if prediction:
+                st.success(
+                    f"Good news - you are happy! We're {probability:.0%} sure 😃"
+                )
+            else:
+                st.error(
+                    f"Oh no, you seem to be unhappy! At least for {probability:.0%} 😟"
+                )
+        except requests.exceptions.RequestException as e:
+            st.error(f"Failed to connect to the prediction service: {e}")
+
+
+def rating_section(
+    prompt: str, key: str, text_font_size: int, star_rating_size: int
+) -> int:
+    """Reusable component for a rating section with question and stars on the same line."""
+
+    col_q, col_s = st.columns([3, 1])
+    with col_q:
+        st.write(
+            f"<p style='text-align: left; font-size: {text_font_size}px;'><b>{prompt}</b></p>",
+            unsafe_allow_html=True,
+        )
+    with col_s:
+        return st_star_rating(
+            label=None,
+            size=star_rating_size,
+            maxValue=5,
+            defaultValue=3,
+            key=key,
+            dark_theme=True,
+        )
 
 
 def main() -> None:
     # Page configuration
-    st.set_page_config("happymeter", page_icon=":blush:")
+    st.set_page_config("happymeter", page_icon="😊", layout="wide")
 
-    # Custom size options
-    star_rating_size = 25
-    text_font_size = 18
+    # Constants
+    STAR_RATING_SIZE = 25
+    TEXT_FONT_SIZE = 18
+    CSS_FILE_PATH = "src/static/css/style.css"
 
-    # Use custom CSS to set a maximum width
-    with open("src/static/css/style.css") as f:
-        css = f.read()
+    # Apply custom CSS
+    if os.path.exists(CSS_FILE_PATH):
+        with open(CSS_FILE_PATH) as f:
+            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-    st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
-
-    st.title("Find out how happy you are with your living situation :blush:")
-
-    rating_text_1 = "How satisfied are you with the availability of information about the city services?"
-    st.write(
-        f"<b><span style='font-size: {text_font_size}px;'>{rating_text_1}</span></b>",
+    # Title with negative offset
+    st.markdown(
+        """
+        <h1 style="margin-top: -70px; font-size: 30px;">Find out how happy you are with your living situation 😊</h1>
+        """,
         unsafe_allow_html=True,
     )
 
-    col1, col2, col3 = st.columns(3)
+    # Questions and keys for ratings
+    questions = [
+        "How satisfied are you with the availability of information about the city services?",
+        "How satisfied are you with the cost of housing?",
+        "How satisfied are you with the overall quality of public schools?",
+        "How much do you trust in the local police?",
+        "How satisfied are you with the maintenance of streets and sidewalks?",
+        "How satisfied are you with the availability of social community events?",
+    ]
+    keys = [
+        "city_services",
+        "housing_costs",
+        "school_quality",
+        "local_policies",
+        "maintenance",
+        "social_events",
+    ]
 
-    with col1:
-        pass
-    with col3:
-        pass
-    with col2:
-        rating_1 = st_star_rating(
-            label=None,
-            size=star_rating_size,
-            maxValue=5,
-            defaultValue=3,
-            key="rating_1",
-            customCSS=f"<style>{css}</style>",
-            dark_theme=True,
-        )
-
-    rating_text_2 = "How satisfied are you with the cost of housing?"
-    st.write(
-        f"<b><span style='font-size: {text_font_size}px;'>{rating_text_2}</span></b>",
-        unsafe_allow_html=True,
-    )
-
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-        pass
-    with col3:
-        pass
-    with col2:
-        rating_2 = st_star_rating(
-            label=None,
-            size=star_rating_size,
-            maxValue=5,
-            defaultValue=3,
-            key="rating_2",
-            dark_theme=True,
-        )
-
-    rating_text_3 = "How satisfied are you with the overall quality of public schools?"
-    st.write(
-        f"<b><span style='font-size: {text_font_size}px;'>{rating_text_3}</span></b>",
-        unsafe_allow_html=True,
-    )
-
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-        pass
-    with col3:
-        pass
-    with col2:
-        rating_3 = st_star_rating(
-            label=None,
-            size=star_rating_size,
-            maxValue=5,
-            defaultValue=3,
-            key="rating_3",
-            dark_theme=True,
-        )
-
-    rating_text_4 = "How much do you trust in the local police?"
-    st.write(
-        f"<b><span style='font-size: {text_font_size}px;'>{rating_text_4}</span></b>",
-        unsafe_allow_html=True,
-    )
-
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-        pass
-    with col3:
-        pass
-    with col2:
-        rating_4 = st_star_rating(
-            label=None,
-            size=star_rating_size,
-            maxValue=5,
-            defaultValue=3,
-            key="rating_4",
-            dark_theme=True,
-        )
-
-    rating_text_5 = (
-        "How much are you satisfied in the maintenance of streets and sidewalks?"
-    )
-    st.write(
-        f"<b><span style='font-size: {text_font_size}px;'>{rating_text_5}</span></b>",
-        unsafe_allow_html=True,
-    )
-
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-        pass
-    with col3:
-        pass
-    with col2:
-        rating_5 = st_star_rating(
-            label=None,
-            size=star_rating_size,
-            maxValue=5,
-            defaultValue=3,
-            key="rating_5",
-            dark_theme=True,
-        )
-
-    rating_text_6 = (
-        "How much are you satisfied in the availability of social community events?"
-    )
-    st.write(
-        f"<b><span style='font-size: {text_font_size}px;'>{rating_text_6}</span></b>",
-        unsafe_allow_html=True,
-    )
-
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-        pass
-    with col3:
-        pass
-    with col2:
-        rating_6 = st_star_rating(
-            label=None,
-            size=star_rating_size,
-            maxValue=5,
-            defaultValue=3,
-            key="rating_6",
-            dark_theme=True,
-        )
-
-    data = {
-        "city_services": rating_1,
-        "housing_costs": rating_2,
-        "school_quality": rating_3,
-        "local_policies": rating_4,
-        "maintenance": rating_5,
-        "social_events": rating_6,
+    # Collect ratings
+    ratings = {
+        key: rating_section(prompt, key, TEXT_FONT_SIZE, STAR_RATING_SIZE)
+        for prompt, key in zip(questions, keys)
     }
 
-    col1, col2, col3, col4, col5 = st.columns(5)
-
-    with col1:
-        pass
+    # Submit button centered
+    st.markdown("<br>", unsafe_allow_html=True)  # Small spacer
+    col1, col2, col3 = st.columns([4, 2, 4])
     with col2:
-        pass
-    with col4:
-        pass
-    with col5:
-        pass
-    with col3:
         predict_button = st.button(label="Submit your ratings")
 
-    predict(data, predict_button)
+    # Predict results
+    predict(ratings, predict_button)
 
 
 if __name__ == "__main__":

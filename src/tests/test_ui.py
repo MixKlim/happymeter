@@ -12,13 +12,19 @@ def test_app_run() -> None:
     """Test that the Streamlit app runs without errors.
 
     Ensures that the Streamlit app defined in `src/streamlit/ui.py` runs without raising any exceptions.
+    Additionally, it could verify if the app outputs expected content or components.
     """
     at = AppTest.from_file("src/streamlit/ui.py").run()
     assert not at.exception
 
 
 @pytest.mark.parametrize(
-    "remote_env, expected_host", [("", "127.0.0.1"), ("True", "backend")]
+    "remote_env, expected_host",
+    [
+        ("", "127.0.0.1"),
+        ("True", "backend"),
+        ("AnotherValue", "backend"),
+    ],
 )
 def test_get_backend_host(remote_env: str, expected_host: str) -> None:
     """Test the `get_backend_host` function with different environment variable settings.
@@ -47,7 +53,7 @@ def mock_st() -> Generator[Tuple[MagicMock, MagicMock], None, None]:
 
 
 @patch("requests.post")
-def test_predict_success(
+def test_predict_happy(
     mock_post: MagicMock, mock_st: Tuple[MagicMock, MagicMock]
 ) -> None:
     """Test the `predict` function for a successful prediction.
@@ -56,18 +62,59 @@ def test_predict_success(
         mock_post (MagicMock): Mocked version of `requests.post`.
         mock_st (Tuple[MagicMock, MagicMock]): Mocked versions of `st.success` and `st.error`.
 
-    Verifies that the function displays a success message with the correct prediction details.
+    Verifies that the function displays a success message with the correct happy prediction details.
     """
+    mock_response = MagicMock()
+    mock_response.raise_for_status.return_value = None
+    mock_response.json.return_value = {"prediction": True, "probability": 0.95}
+    mock_post.return_value = mock_response
+
+    data = {"city_services": 4, "housing_costs": 5}
+
+    predict(data, predict_button=True)
+    mock_st[0].assert_called_once_with("Good news - you are happy! We're 95% sure 😃")
+
+
+@patch("requests.post")
+def test_predict_unhappy(
+    mock_post: MagicMock, mock_st: Tuple[MagicMock, MagicMock]
+) -> None:
+    """Test the `predict` function for a successful prediction.
+
+    Args:
+        mock_post (MagicMock): Mocked version of `requests.post`.
+        mock_st (Tuple[MagicMock, MagicMock]): Mocked versions of `st.success` and `st.error`.
+
+    Verifies that the function displays a success message with the correct unhappy prediction details.
+    """
+    mock_response = MagicMock()
+    mock_response.raise_for_status.return_value = None
+    mock_response.json.return_value = {"prediction": False, "probability": 0.6}
+    mock_post.return_value = mock_response
+
+    data = {"city_services": 2, "housing_costs": 1}
+
+    predict(data, predict_button=True)
+    mock_st[1].assert_called_with("Oh no, you seem to be unhappy! At least for 60% 😟")
+
+
+@patch("requests.post")
+def test_predict_empty_data(
+    mock_post: MagicMock, mock_st: Tuple[MagicMock, MagicMock]
+) -> None:
+    """Test the `predict` function when the data is empty or malformed."""
+
     mock_response = MagicMock()
     mock_response.raise_for_status.return_value = None
     mock_response.json.return_value = {"prediction": True, "probability": 0.9}
     mock_post.return_value = mock_response
 
-    data = {"key": "value"}
-    predict_button = True
-    predict(data, predict_button)
+    data: dict[str, str] = {}  # Empty data
 
-    mock_st[0].assert_called_once_with("Good news - you are happy! We're 90% sure 😃")
+    predict(data, predict_button=True)
+
+    # Check if error handling occurs or a message is displayed
+    mock_st[0].assert_called_with("Good news - you are happy! We're 90% sure 😃")
 
 
 @patch("requests.post")
@@ -81,6 +128,7 @@ def test_predict_failure(
         mock_st (Tuple[MagicMock, MagicMock]): Mocked versions of `st.success` and `st.error`.
 
     Verifies that the function displays an error message when the prediction service fails.
+    Testing additional error types or HTTP codes could further improve robustness.
     """
     mock_response = MagicMock()
     mock_response.raise_for_status.side_effect = requests.exceptions.RequestException(
@@ -91,9 +139,18 @@ def test_predict_failure(
     data = {"key": "value"}
     predict_button = True
     predict(data, predict_button)
-
     mock_st[1].assert_called_once_with(
         "Failed to connect to the prediction service: Server Error"
+    )
+
+    # Additional test for HTTP 404 error
+    mock_response.raise_for_status.side_effect = requests.exceptions.HTTPError(
+        "404 Client Error: Not Found"
+    )
+    mock_post.return_value = mock_response
+    predict(data, predict_button)
+    mock_st[1].assert_called_with(
+        "Failed to connect to the prediction service: 404 Client Error: Not Found"
     )
 
 
@@ -108,6 +165,7 @@ def test_predict_no_button_pressed(
         mock_st (Tuple[MagicMock, MagicMock]): Mocked versions of `st.success` and `st.error`.
 
     Verifies that no prediction occurs and no messages are displayed when the button is not pressed.
+    Testing edge cases where `predict_button` is not strictly boolean could add value.
     """
     data = {"key": "value"}
     predict_button = False
@@ -127,6 +185,7 @@ def test_rating_section(mock_st_star_rating: MagicMock, mock_st: MagicMock) -> N
         mock_st (MagicMock): Mocked versions of `st` components such as `columns` and `write`.
 
     Verifies that the function displays the rating section correctly and returns the expected rating value.
+    Additional test cases could include minimum and maximum star ratings.
     """
     mock_st.columns.return_value = (MagicMock(), MagicMock())
     mock_col_q = mock_st.columns.return_value[0]
@@ -153,6 +212,27 @@ def test_rating_section(mock_st_star_rating: MagicMock, mock_st: MagicMock) -> N
     )
 
     assert result == 4
+
+    # Additional test for minimum rating
+    mock_st_star_rating.return_value = 1
+    result = rating_section(
+        prompt="Test prompt",
+        key="test_key",
+        text_font_size=18,
+        star_rating_size=25,
+    )
+    assert result == 1
+
+    # Invalid value, outside the range.
+    mock_st_star_rating.return_value = 0
+    result = rating_section(
+        prompt="Test prompt",
+        key="test_key",
+        text_font_size=18,
+        star_rating_size=25,
+    )
+
+    assert result == 0
 
 
 if __name__ == "__main__":

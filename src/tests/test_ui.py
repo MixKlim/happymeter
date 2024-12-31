@@ -2,7 +2,7 @@ import os
 import pytest
 import requests
 from unittest.mock import patch, MagicMock
-from typing import Generator, Tuple
+from typing import Generator, Tuple, Dict, Any
 import streamlit as st
 from src.streamlit.ui import get_backend_host, rating_section, predict
 from streamlit.testing.v1 import AppTest
@@ -47,64 +47,74 @@ def mock_st() -> Generator[Tuple[MagicMock, MagicMock], None, None]:
         yield mock_success, mock_error
 
 
-@patch("requests.post")
-def test_predict_happy(
-    mock_post: MagicMock, mock_st: Tuple[MagicMock, MagicMock]
+def setup_mock_response(
+    mock_post: MagicMock, prediction: bool, probability: float
 ) -> None:
-    """Tests the `predict` function for a positive prediction.
+    """Helper function to set up the mocked response for requests.post.
+
+    Args:
+        mock_post (MagicMock): The mocked `requests.post` method.
+        prediction (bool): The prediction value to mock.
+        probability (float): The probability value to mock.
+    """
+    mock_response = MagicMock()
+    mock_response.raise_for_status.return_value = None
+    mock_response.json.return_value = {
+        "prediction": prediction,
+        "probability": probability,
+    }
+    mock_post.return_value = mock_response
+
+
+@patch("requests.post")
+@pytest.mark.parametrize(
+    "data, prediction, probability, expected_message, is_success",
+    [
+        (
+            {"city_services": 4, "housing_costs": 5},
+            True,
+            0.95,
+            "Good news - you are happy! We're 95% sure 😃",
+            True,
+        ),
+        (
+            {"city_services": 2, "housing_costs": 1},
+            False,
+            0.6,
+            "Oh no, you seem to be unhappy! At least for 60% 😟",
+            False,
+        ),
+        ({}, True, 0.9, "Good news - you are happy! We're 90% sure 😃", True),
+    ],
+)
+def test_predict(
+    mock_post: MagicMock,
+    mock_st: Tuple[MagicMock, MagicMock],
+    data: Dict[str, Any],
+    prediction: bool,
+    probability: float,
+    expected_message: str,
+    is_success: bool,
+) -> None:
+    """Tests the `predict` function with various scenarios.
 
     Args:
         mock_post (MagicMock): Mocked `requests.post` method.
         mock_st (Tuple[MagicMock, MagicMock]): Mocked Streamlit methods.
+        data (Dict[str, Any]): Input data for the `predict` function.
+        prediction (bool): The mocked prediction value.
+        probability (float): The mocked probability value.
+        expected_message (str): The expected Streamlit message.
+        is_success (bool): Whether the message is for success or error.
     """
-    mock_response = MagicMock()
-    mock_response.raise_for_status.return_value = None
-    mock_response.json.return_value = {"prediction": True, "probability": 0.95}
-    mock_post.return_value = mock_response
+    setup_mock_response(mock_post, prediction, probability)
 
-    data = {"city_services": 4, "housing_costs": 5}
     predict(data, predict_button=True)
-    mock_st[0].assert_called_once_with("Good news - you are happy! We're 95% sure 😃")
 
-
-@patch("requests.post")
-def test_predict_unhappy(
-    mock_post: MagicMock, mock_st: Tuple[MagicMock, MagicMock]
-) -> None:
-    """Tests the `predict` function for a negative prediction.
-
-    Args:
-        mock_post (MagicMock): Mocked `requests.post` method.
-        mock_st (Tuple[MagicMock, MagicMock]): Mocked Streamlit methods.
-    """
-    mock_response = MagicMock()
-    mock_response.raise_for_status.return_value = None
-    mock_response.json.return_value = {"prediction": False, "probability": 0.6}
-    mock_post.return_value = mock_response
-
-    data = {"city_services": 2, "housing_costs": 1}
-    predict(data, predict_button=True)
-    mock_st[1].assert_called_with("Oh no, you seem to be unhappy! At least for 60% 😟")
-
-
-@patch("requests.post")
-def test_predict_empty_data(
-    mock_post: MagicMock, mock_st: Tuple[MagicMock, MagicMock]
-) -> None:
-    """Tests the `predict` function with empty input data.
-
-    Args:
-        mock_post (MagicMock): Mocked `requests.post` method.
-        mock_st (Tuple[MagicMock, MagicMock]): Mocked Streamlit methods.
-    """
-    mock_response = MagicMock()
-    mock_response.raise_for_status.return_value = None
-    mock_response.json.return_value = {"prediction": True, "probability": 0.9}
-    mock_post.return_value = mock_response
-
-    data: dict[str, str] = {}  # Empty data
-    predict(data, predict_button=True)
-    mock_st[0].assert_called_with("Good news - you are happy! We're 90% sure 😃")
+    if is_success:
+        mock_st[0].assert_called_once_with(expected_message)
+    else:
+        mock_st[1].assert_called_once_with(expected_message)
 
 
 @patch("requests.post")

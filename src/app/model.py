@@ -8,7 +8,7 @@ from sklearn.ensemble import GradientBoostingClassifier
 
 class SurveyMeasurement(BaseModel):
     """
-    Class which describes a single survey measurement
+    Class which describes a single survey measurement.
     """
 
     city_services: int = Field(
@@ -57,7 +57,7 @@ class SurveyMeasurement(BaseModel):
 
 class HappyModel:
     """
-    Class for training the model and making predictions
+    Class for training the model and making predictions.
     """
 
     def __init__(
@@ -66,7 +66,7 @@ class HappyModel:
         """
         Class constructor, loads the dataset and loads the model
         if exists. If not, calls the _train_model method and
-        saves the model
+        saves the model.
         """
         self.df_fname_ = data_fname
         self.df = pd.read_csv(
@@ -90,7 +90,7 @@ class HappyModel:
 
     def _train_model(self) -> GradientBoostingClassifier:
         """
-        Perform model training using the GradientBoostingClassifier classifier
+        Perform model training using the GradientBoostingClassifier classifier.
         """
         X = self.df.drop("happiness", axis=1)
         y = self.df["happiness"]
@@ -118,7 +118,7 @@ class HappyModel:
     ) -> tuple[str, float]:
         """
         Make a prediction based on the user-entered data
-        Returns the predicted happiness with its respective probability
+        Returns the predicted happiness with its respective probability.
         """
         data_in = [
             [

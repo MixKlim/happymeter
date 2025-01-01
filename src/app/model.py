@@ -115,7 +115,7 @@ class HappyModel:
         local_policies: int,
         maintenance: int,
         social_events: int,
-    ) -> tuple[str, float]:
+    ) -> tuple[int, float]:
         """
         Make a prediction based on the user-entered data
         Returns the predicted happiness with its respective probability.
@@ -133,4 +133,4 @@ class HappyModel:
 
         prediction = self.model.predict(data_in)
         probability = self.model.predict_proba(data_in).max()
-        return prediction[0], probability
+        return int(prediction[0]), float(probability)

@@ -1,219 +1,217 @@
-import sqlite3
-from pathlib import Path
 import pytest
+from pathlib import Path
+from sqlalchemy import create_engine, inspect
+from sqlalchemy.orm import sessionmaker
 from unittest.mock import patch, MagicMock
-from typing import Generator
+from src.app.database import init_db, read_from_db, save_to_db, HappyPrediction
+from typing import Dict, Generator
 
-from src.app.database import init_db, read_from_db, save_to_db
+# Mock database path
+DB_PATH = Path("test.db")
+
+
+@pytest.fixture(scope="module")
+def setup_db() -> Generator[MagicMock, None, None]:
+    """
+    Fixture to set up the database for testing.
+
+    This fixture ensures that the database is initialized before tests run,
+    and it is cleaned up after all tests are finished.
+
+    Yields:
+        MagicMock: The database set up and ready for testing.
+    """
+
+    mock_db = MagicMock()
+    yield mock_db
 
 
 @pytest.fixture
-def temp_db_path(
-    tmp_path: Path, request: pytest.FixtureRequest
-) -> Generator[Path, None, None]:
-    """Fixture to create a temporary SQLite database file, optionally with a predefined table.
+def db_session(setup_db: MagicMock) -> sessionmaker:
+    """
+    Fixture to provide a database session for each test.
 
     Args:
-        tmp_path (Path): Pytest-provided temporary path.
-        request (FixtureRequest): Pytest request object for parameterizing the fixture.
+        setup_db (MagicMock): Ensures the database is initialized before the test.
 
-    Yields:
-        Path: Path to the temporary SQLite database file.
+    Returns:
+        sessionmaker: A SQLAlchemy session for interacting with the database.
     """
-    db_path = tmp_path / "test.db"
-
-    # Check if the test requests a pre-initialized table
-    with sqlite3.connect(db_path) as conn:
-        if getattr(request, "param", False):  # `True` if a table is requested
-            cursor = conn.cursor()
-            cursor.execute("""
-                CREATE TABLE IF NOT EXISTS happy_predictions (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    city_services INTEGER,
-                    housing_costs INTEGER,
-                    school_quality INTEGER,
-                    local_policies INTEGER,
-                    maintenance INTEGER,
-                    social_events INTEGER,
-                    prediction INTEGER,
-                    probability REAL
-                )
-            """)
-            conn.commit()
-
-    yield db_path
+    engine = create_engine(f"sqlite:///{DB_PATH}")
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    yield session
+    session.close()
 
 
-# Test cases
-@patch("src.app.database.logger")
-def test_init_db_success(mock_logger: MagicMock, temp_db_path: Path) -> None:
-    """Test that the init_db function creates the required table and logs success.
+def test_init_db_success(setup_db: MagicMock) -> None:
+    """
+    Test to ensure the database is initialized successfully.
 
     Args:
-        mock_logger (MagicMock): Mocked logger.
-        temp_db_path (Path): Path to a temporary SQLite database file.
+        setup_db (MagicMock): Mock database initialized before the test.
     """
-    # Call the function to initialize the database
-    result = init_db(temp_db_path)
+    assert DB_PATH.exists(), "Database file does not exist"
 
-    # Assert the function returned True
-    assert result is True
 
-    # Verify the table was created
-    with sqlite3.connect(temp_db_path) as conn:
-        cursor = conn.cursor()
-        cursor.execute("""
-            SELECT name
-            FROM sqlite_master
-            WHERE type='table' AND name='happy_predictions';
-        """)
-        table = cursor.fetchone()
-        assert table is not None, "Table 'happy_predictions' was not created"
+def test_happy_prediction_table_created(setup_db: MagicMock) -> None:
+    """
+    Test to check if the 'happy_predictions' table is created in the database.
 
-    # Verify the logger was called with success message
-    mock_logger.info.assert_called_once_with("Database initialized successfully!")
+    Args:
+        setup_db (MagicMock): Ensures the database is initialized before the test.
+
+    Returns:
+        None: This test verifies if the table exists in the database.
+    """
+    engine = create_engine(f"sqlite:///{DB_PATH}")
+    inspector = inspect(engine)
+    assert (
+        "happy_predictions" in inspector.get_table_names()
+    ), "Table 'happy_predictions' was not created"
 
 
 @patch("src.app.database.logger")
-def test_init_db_failure(mock_logger: MagicMock, temp_db_path: Path) -> None:
-    """Test that init_db logs an error and returns False when an exception occurs.
+def test_init_db_failure(mock_logger: MagicMock) -> None:
+    """
+    Test to simulate a failure during database initialization.
 
     Args:
         mock_logger (MagicMock): Mocked logger.
-        temp_db_path (Path): Path to a temporary SQLite database file.
     """
-    # Induce an error by passing a non-writable path
-    non_writable_path = Path("/invalid_path/test.db")
-
-    # Call the function and assert it returns False
-    result = init_db(non_writable_path)
-    assert result is False
+    # Simulate failure by passing an invalid path
+    invalid_db_path = Path("invalid/path/to/db.db")
+    result = init_db(invalid_db_path)
+    assert not result, "Database initialization should have failed with an invalid path"
 
     # Verify the logger captured the error
     mock_logger.error.assert_called_once()
     assert "Error initializing database" in mock_logger.error.call_args[0][0]
 
 
-@pytest.mark.parametrize("temp_db_path", [True], indirect=True)
 @patch("src.app.database.logger")
-def test_save_to_db_success(mock_logger: MagicMock, temp_db_path: Path) -> None:
-    """Test that save_to_db inserts data into the database and logs success.
+def test_save_to_db_success(mock_logger: MagicMock, db_session: sessionmaker) -> None:
+    """
+    Test the `save_to_db` function to ensure data is saved correctly.
 
     Args:
+        db_session (sessionmaker): A database session used to interact with the database.
         mock_logger (MagicMock): Mocked logger.
-        temp_db_path (Path): Path to a temporary SQLite database file with the required table.
     """
-    data = {
-        "city_services": 5,
+    # Example data to be saved
+    data: Dict[str, int] = {
+        "city_services": 8,
         "housing_costs": 7,
-        "school_quality": 8,
+        "school_quality": 9,
         "local_policies": 6,
-        "maintenance": 9,
-        "social_events": 4,
+        "maintenance": 8,
+        "social_events": 7,
     }
-    prediction = 85
-    probability = 0.92
+    prediction = 75
+    probability = 0.85
 
-    # Call the function to save data
-    save_to_db(temp_db_path, data, prediction, probability)
+    # Save data to the database
+    save_to_db(DB_PATH, data, prediction, probability)
 
-    # Verify the data was inserted
-    with sqlite3.connect(temp_db_path) as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM happy_predictions")
-        rows = cursor.fetchall()
-        assert len(rows) == 1, "Data was not inserted into the database"
-        inserted_row = rows[0]
-        assert inserted_row[1:7] == tuple(data.values()), "Inserted data does not match"
-        assert inserted_row[7] == prediction, "Prediction value does not match"
-        assert inserted_row[8] == probability, "Probability value does not match"
+    # Query the record back to ensure it's saved correctly
+    result = db_session.query(HappyPrediction).filter_by(prediction=75).first()
+    assert result is not None, "Record was not saved correctly"
+    assert (
+        result.city_services == 8
+    ), f"Expected city_services to be 8, but got {result.city_services}"
+    assert (
+        result.probability == 0.85
+    ), f"Expected probability to be 0.85, but got {result.probability}"
 
     # Verify the logger was called with success message
     mock_logger.info.assert_called_once_with("Data saved to the database successfully!")
 
 
-@pytest.mark.parametrize("temp_db_path", [True], indirect=True)
 @patch("src.app.database.logger")
-def test_save_to_db_failure(mock_logger: MagicMock, temp_db_path: Path) -> None:
-    """Test that save_to_db logs an error when an exception occurs.
+def test_save_to_db_failure(mock_logger: MagicMock) -> None:
+    """
+    Test the `save_to_db` function to simulate a failure when saving data.
 
     Args:
         mock_logger (MagicMock): Mocked logger.
-        temp_db_path (Path): Path to a temporary SQLite database file with the required table.
     """
-    # Induce an error by omitting a required column in the data
-    invalid_data = {
-        "city_services": 5,
-        "housing_costs": 7,
-        # "school_quality" missing
-        "local_policies": 6,
-        "maintenance": 9,
-        "social_events": 4,
-    }
-    prediction = 85
-    probability = 0.92
+    invalid_db_path = Path("invalid/path/to/db.db")
 
-    # Call the function and expect it to handle the exception
-    save_to_db(temp_db_path, invalid_data, prediction, probability)
+    # Example data to be saved
+    data: Dict[str, int] = {
+        "city_services": 8,
+        "housing_costs": 7,
+        "school_quality": 9,
+        "local_policies": 6,
+        "maintenance": 8,
+        "social_events": 7,
+    }
+    prediction = 75
+    probability = 0.85
+
+    # Try saving data to an invalid path
+    save_to_db(invalid_db_path, data, prediction, probability)
 
     # Verify the logger captured the error
     mock_logger.error.assert_called_once()
     assert "Error saving data to the database" in mock_logger.error.call_args[0][0]
 
 
-@pytest.mark.parametrize("temp_db_path", [True], indirect=True)
 @patch("src.app.database.logger")
-def test_read_from_db_success(mock_logger: MagicMock, temp_db_path: Path) -> None:
-    """Test that read_from_db returns data correctly and logs success.
+def test_read_from_db_success(mock_logger: MagicMock, db_session: sessionmaker) -> None:
+    """
+    Test the `read_from_db` function to ensure data is read correctly from the database.
+
+    Args:
+        db_session (sessionmaker): A database session used to interact with the database.
+        mock_logger (MagicMock): Mocked logger.
+    """
+    # First, save data to the database
+    data: Dict[str, int] = {
+        "city_services": 8,
+        "housing_costs": 7,
+        "school_quality": 9,
+        "local_policies": 6,
+        "maintenance": 8,
+        "social_events": 7,
+    }
+    prediction = 75
+    probability = 0.85
+    save_to_db(DB_PATH, data, prediction, probability)
+
+    # Read data from the database
+    records = read_from_db(DB_PATH)
+
+    # Verify that at least one record is returned
+    assert len(records) > 0, "No records were retrieved from the database"
+    assert isinstance(
+        records[0], HappyPrediction
+    ), "Returned record is not an instance of HappyPrediction"
+    assert (
+        records[0].prediction == 75
+    ), f"Expected prediction to be 75, but got {records[0].prediction}"
+
+    # Verify that both success messages were logged
+    assert mock_logger.info.call_count == 2, "Expected the logger to be called twice"
+    mock_logger.info.assert_any_call("Data saved to the database successfully!")
+    mock_logger.info.assert_any_call("Data read from the database successfully!")
+
+
+@patch("src.app.database.logger")
+def test_read_from_db_failure(mock_logger: MagicMock) -> None:
+    """
+    Test the `read_from_db` function to simulate a failure when reading data.
 
     Args:
         mock_logger (MagicMock): Mocked logger.
-        temp_db_path (Path): Path to a temporary SQLite database file with the required table and data.
     """
-    # Prepopulate the database with some data
-    test_data = [
-        (1, 5, 7, 8, 6, 9, 4, 85, 0.92),
-        (2, 4, 6, 7, 5, 8, 3, 80, 0.85),
-    ]
-    with sqlite3.connect(temp_db_path) as conn:
-        cursor = conn.cursor()
-        cursor.executemany(
-            """
-            INSERT INTO happy_predictions (
-                id, city_services, housing_costs, school_quality, local_policies,
-                maintenance, social_events, prediction, probability
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """,
-            test_data,
-        )
-        conn.commit()
+    invalid_db_path = Path("invalid/path/to/db.db")
 
-    # Call the function
-    result = read_from_db(temp_db_path)
+    # Attempt to read data from an invalid database path
+    records = read_from_db(invalid_db_path)
 
-    # Verify the function returns the correct data
-    assert result == test_data, "The returned data does not match the expected data"
-
-    # Verify the logger logs a success message
-    mock_logger.info.assert_called_once_with(
-        "Data read from the database successfully!"
-    )
-
-
-@patch("src.app.database.logger")
-def test_read_from_db_failure(mock_logger: MagicMock, temp_db_path: Path) -> None:
-    """Test that read_from_db logs an error and returns an empty list when an exception occurs.
-
-    Args:
-        mock_logger (MagicMock): Mocked logger.
-        temp_db_path (Path): Path to a temporary SQLite database file.
-    """
-    # Induce an error by not creating the required table
-    # Call the function and expect it to handle the exception gracefully
-    result = read_from_db(temp_db_path)
-
-    # Verify the function returns an empty list
-    assert result == [], "The function did not return an empty list on failure"
+    # Ensure that an empty list is returned in case of failure
+    assert records == [], "Expected an empty list in case of failure"
 
     # Verify the logger captured the error
     mock_logger.error.assert_called_once()

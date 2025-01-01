@@ -1,12 +1,21 @@
+import os
 import pytest
+from pathlib import Path
 from fastapi.testclient import TestClient
 from unittest.mock import AsyncMock, patch
 from typing import Dict, Generator
-from src.app.main import app
+from src.app.main import app, get_database_url
 from src.app.database import HappyPrediction
 
 
 client = TestClient(app=app)
+
+
+@pytest.fixture
+def mock_env() -> Generator[None, None, None]:
+    """Fixture to mock environment variables for tests."""
+    with patch.dict(os.environ, {}, clear=True):
+        yield
 
 
 @pytest.fixture
@@ -52,6 +61,44 @@ def mock_read_from_db() -> Generator[AsyncMock, None, None]:
 
 
 # Test cases
+@pytest.mark.parametrize(
+    "remote_env, expected_url",
+    [
+        (
+            "",  # SQLite when REMOTE is not set
+            f"sqlite:///{Path(__file__).resolve().parent.parent.absolute() / 'database' / 'predictions.db'}",
+        ),
+        (
+            "true",  # PostgreSQL when REMOTE is set
+            "postgresql://test_user:test_password@postgres/test_db",
+        ),
+    ],
+)
+def test_get_database_url(mock_env: None, remote_env: str, expected_url: str) -> None:
+    """
+    Parametrized test for getting the correct database URL based on the REMOTE environment variable.
+
+    Args:
+        mock_env (None): Mocked environment.
+        remote_env (str): Value to set for the REMOTE environment variable.
+        expected_url (str): The expected URL to be returned by get_database_url.
+    """
+    # Mock environment variables based on the parameterized test case
+    if remote_env == "":
+        os.environ["REMOTE"] = ""
+    else:
+        os.environ["REMOTE"] = "true"
+        os.environ["POSTGRES_USER"] = "test_user"
+        os.environ["POSTGRES_PASSWORD"] = "test_password"
+        os.environ["POSTGRES_DB"] = "test_db"
+
+    # Call the function
+    result = get_database_url()
+
+    # Assert that the returned URL matches the expected URL
+    assert result == expected_url, f"Expected {expected_url}, but got {result}"
+
+
 def test_root() -> None:
     """Tests the root endpoint.
 

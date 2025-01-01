@@ -3,6 +3,7 @@ from fastapi.testclient import TestClient
 from unittest.mock import AsyncMock, patch
 from typing import Dict, Generator
 from src.app.main import app
+from src.app.database import HappyPrediction
 
 
 client = TestClient(app=app)
@@ -22,7 +23,7 @@ def mock_model() -> Generator[AsyncMock, None, None]:
 
 
 @pytest.fixture
-def mock_read_from_db_success() -> Generator[AsyncMock, None, None]:
+def mock_read_from_db() -> Generator[AsyncMock, None, None]:
     """Fixture to mock read_from_db for a successful database read.
 
     This fixture mocks the `read_from_db` function to return a sample list
@@ -35,8 +36,16 @@ def mock_read_from_db_success() -> Generator[AsyncMock, None, None]:
     with patch(
         "src.app.main.read_from_db",
         return_value=[
-            (1, 5, 7, 8, 6, 9, 4, 85, 0.92),
-            (2, 4, 6, 7, 5, 8, 3, 80, 0.85),
+            HappyPrediction(
+                city_services=5,
+                housing_costs=4,
+                school_quality=3,
+                local_policies=2,
+                maintenance=1,
+                social_events=4,
+                prediction=85,
+                probability=0.92,
+            )
         ],
     ) as mock:
         yield mock
@@ -138,21 +147,17 @@ def test_predict_happiness_invalid_input() -> None:
 
 
 @patch("src.app.main.logger")
-def test_read_measurements_success(
-    mock_logger: AsyncMock, mock_read_from_db_success: AsyncMock
+def test_read_measurements(
+    mock_logger: AsyncMock, mock_read_from_db: AsyncMock
 ) -> None:
-    """Tests that the measurements endpoint successfully renders HTML template.
+    """
+    Tests the `read_measurements` endpoint.
 
     Args:
         mock_logger (AsyncMock): Mocked logger.
-        mock_read_from_db_success (): Mocked method for a successful database read.
-
-    Asserts:
-        - The response status code is 200.
-        - The rendered HTML template contains the correct data.
-        - Mocked database read method was called.
-        - Mocked logger logged a success message
+        mock_read_from_db (MagicMock): Mock for the read_from_db function.
     """
+
     # Act
     response = client.get("/measurements")
 
@@ -162,20 +167,17 @@ def test_read_measurements_success(
     ), "Expected status code 200 for a successful response"
 
     html_content = response.text
+
     # Verify HTML content
     assert (
         "<h1>Saved Measurements</h1>" in html_content
     ), "HTML content should include the header"
-    assert "<td>1</td>" in html_content, "HTML content should include the first row ID"
-    assert (
-        "<td>5</td>" in html_content
-    ), "HTML content should include data from the first row"
-    assert (
-        "<td>0.92</td>" in html_content
-    ), "HTML content should include the first row probability"
+    assert "<td>1</td>" in html_content, "HTML content should include ID"
+    assert "<td>5</td>" in html_content, "HTML content should include data"
+    assert "<td>0.92</td>" in html_content, "HTML content should include probability"
 
     # Verify db mock was called
-    mock_read_from_db_success.assert_called_once()
+    mock_read_from_db.assert_called_once()
 
     # Verify the logger logs a success message
     mock_logger.info.assert_called_once_with("Measurement rows rendered successfully!")

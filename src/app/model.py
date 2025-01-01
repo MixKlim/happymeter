@@ -55,6 +55,22 @@ class SurveyMeasurement(BaseModel):
     )
 
 
+class HappyPrediction(SurveyMeasurement):
+    """
+    A class representing a prediction based on survey measurements.
+
+    Attributes:
+        prediction (int): Predicted happiness value.
+        probability (float): Probability of the prediction.
+    """
+
+    prediction: int
+    probability: float
+
+    class Config:
+        orm_mode = True  # For compatibility with SQLAlchemy ORM
+
+
 class HappyModel:
     """
     Class for training the model and making predictions.

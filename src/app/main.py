@@ -8,11 +8,12 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from jinja2 import Template
+from typing import List
 
 from src.app.model import HappyModel, SurveyMeasurement
 from src.app import log_config
 from src.app.logger import logger
-from src.app.database import init_db, read_from_db, save_to_db
+from src.app.database import HappyPrediction, init_db, read_from_db, save_to_db
 
 # Create app and model objects
 app = FastAPI(
@@ -100,9 +101,8 @@ async def read_measurements() -> HTMLResponse:
     Returns:
         HTMLResponse: A response containing the HTML representation of all saved measurements.
     """
-
-    # Read data from the database
-    rows = read_from_db(DB_PATH)
+    # Read data from the database using SQLAlchemy and the HappyPrediction model
+    rows: List[HappyPrediction] = read_from_db(DB_PATH)
 
     # HTML Template for rendering rows
     template = Template("""
@@ -127,15 +127,15 @@ async def read_measurements() -> HTMLResponse:
             </tr>
             {% for row in rows %}
             <tr>
-                <td>{{ row[0] }}</td>
-                <td>{{ row[1] }}</td>
-                <td>{{ row[2] }}</td>
-                <td>{{ row[3] }}</td>
-                <td>{{ row[4] }}</td>
-                <td>{{ row[5] }}</td>
-                <td>{{ row[6] }}</td>
-                <td>{{ row[7] }}</td>
-                <td>{{ row[8] }}</td>
+                <td>{{ row.id }}</td>
+                <td>{{ row.city_services }}</td>
+                <td>{{ row.housing_costs }}</td>
+                <td>{{ row.school_quality }}</td>
+                <td>{{ row.local_policies }}</td>
+                <td>{{ row.maintenance }}</td>
+                <td>{{ row.social_events }}</td>
+                <td>{{ row.prediction }}</td>
+                <td>{{ '%.2f' % row.probability }}</td>
             </tr>
             {% endfor %}
         </table>

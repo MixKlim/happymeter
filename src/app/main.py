@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 import uvicorn
@@ -33,10 +34,28 @@ templates = Jinja2Templates(
     directory=Path(__file__).resolve().parent.parent.absolute() / "templates"
 )
 
-DB_PATH = (
-    Path(__file__).resolve().parent.parent.absolute() / "database" / "predictions.db"
-)
-DB_INITIALIZED = init_db(DB_PATH)
+
+def get_database_url() -> str:
+    """
+    Check what type of database to use. Either local (SQLite) or remote (PostgreSQL).
+
+    Returns:
+        str: database url.
+    """
+    remote_deployment = os.getenv("REMOTE", "")
+    if bool(remote_deployment):
+        return f'postgresql://{os.getenv("POSTGRES_USER")}:{os.getenv("POSTGRES_PASSWORD")}@postgres/{os.getenv("POSTGRES_DB")}'
+    else:
+        DB_PATH = (
+            Path(__file__).resolve().parent.parent.absolute()
+            / "database"
+            / "predictions.db"
+        )
+        return f"sqlite:///{DB_PATH}"
+
+
+DATABASE_URL = get_database_url()
+DB_INITIALIZED = init_db(DATABASE_URL)
 
 
 # Reuse FastAPI's exception handlers
@@ -83,7 +102,7 @@ async def predict_happiness(measurement: SurveyMeasurement) -> dict:
 
         if DB_INITIALIZED:
             # Save data to the database
-            save_to_db(DB_PATH, data, prediction, probability)
+            save_to_db(DATABASE_URL, data, prediction, probability)
 
         logger.info("Request handled successfully!")
         return {"prediction": prediction, "probability": probability}
@@ -102,7 +121,7 @@ async def read_measurements() -> HTMLResponse:
         HTMLResponse: A response containing the HTML representation of all saved measurements.
     """
     # Read data from the database using SQLAlchemy and the HappyPrediction model
-    rows: List[HappyPrediction] = read_from_db(DB_PATH)
+    rows: List[HappyPrediction] = read_from_db(DATABASE_URL)
 
     # HTML Template for rendering rows
     template = Template("""

@@ -1,4 +1,3 @@
-from pathlib import Path
 from typing import Dict, List, Type
 from sqlalchemy import create_engine, Column, Integer, Float
 from sqlalchemy.orm import sessionmaker, declarative_base
@@ -37,18 +36,18 @@ class HappyPrediction(Base):
     probability = Column(Float, nullable=False)
 
 
-def init_db(DB_PATH: Path) -> bool:
+def init_db(DATABASE_URL: str) -> bool:
     """
-    Initialize the SQLite database and ensure the required table exists.
+    Initialize the database and ensure the required table exists.
 
     Args:
-        DB_PATH (Path): Path to the SQLite database.
+        DATABASE_URL (str): Database URL.
 
     Returns:
         bool: True if the database was initialized successfully, False otherwise.
     """
     try:
-        engine = create_engine(f"sqlite:///{DB_PATH}")
+        engine = create_engine(DATABASE_URL)
         Base.metadata.create_all(engine)  # Create the table if it doesn't exist
         logger.info("Database initialized successfully!")
     except Exception as e:
@@ -58,19 +57,19 @@ def init_db(DB_PATH: Path) -> bool:
 
 
 def save_to_db(
-    DB_PATH: Path, data: Dict[str, int], prediction: int, probability: float
+    DATABASE_URL: str, data: Dict[str, int], prediction: int, probability: float
 ) -> None:
     """
-    Save the data into the SQLite database.
+    Save the data into the database.
 
     Args:
-        DB_PATH (Path): Path to the SQLite database.
+        DATABASE_URL (str): Database URL.
         data (Dict[str, int]): Input data containing survey measurements.
         prediction (int): The predicted happiness value.
         probability (float): The prediction probability.
     """
     try:
-        engine = create_engine(f"sqlite:///{DB_PATH}")
+        engine = create_engine(DATABASE_URL)
         SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
         session = SessionLocal()
 
@@ -96,18 +95,18 @@ def save_to_db(
         logger.error(f"Error saving data to the database: {e}")
 
 
-def read_from_db(DB_PATH: Path) -> List[HappyPrediction]:
+def read_from_db(DATABASE_URL: str) -> List[HappyPrediction]:
     """
-    Read the data from the SQLite database.
+    Read the data from the database.
 
     Args:
-        DB_PATH (Path): Path to the SQLite database.
+        DATABASE_URL (str): Database URL.
 
     Returns:
         List[HappyPrediction]: All rows of a query result as instances of HappyPrediction.
     """
     try:
-        engine = create_engine(f"sqlite:///{DB_PATH}")
+        engine = create_engine(DATABASE_URL)
         SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
         session = SessionLocal()
 

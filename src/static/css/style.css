@@ -1,9 +1,9 @@
 body {
-  background-color: rgb(199, 144, 43);
+  background-color: rgb(199, 144, 43) !important;
   font-size: 18px;
   margin: 0;
   padding: 0;
-  color: purple;
+  color: purple !important;
 }
 
 h1, h2, p, div {

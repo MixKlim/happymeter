@@ -11,7 +11,7 @@ Base: Type[declarative_base] = declarative_base()
 
 class HappyPrediction(Base):
     """
-    A class that represents the happy_predictions table in the SQLite database.
+    A class that represents the happy_predictions table in the database.
 
     Attributes:
         id (int): Primary key of the table.

@@ -109,6 +109,7 @@ virtualenv = "20.25.0"
 watchdog = "3.0.0"
 zipp = "^3.20.2"
 sqlalchemy = "^2.0.36"
+psycopg2 = "^2.9.10"
 
 [build-system]
 requires = ["poetry-core"]

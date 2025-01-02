@@ -1,11 +1,32 @@
 services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres-container
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: predictions
+    ports:
+      - 5432:5432
+    networks:
+      - deploy_network
+
   backend:
     build:
       context: .
       dockerfile: Dockerfile.backend
     container_name: backend-container
+    environment:
+      REMOTE: True
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: predictions
     ports:
       - 8080:8080
+    depends_on:
+      - postgres
     networks:
       - deploy_network
 
@@ -17,12 +38,15 @@ services:
     ports:
       - 8501:8501
     environment:
-      - REMOTE=True
-    networks:
-      - deploy_network
+      REMOTE: True
     depends_on:
       - backend
+    networks:
+      - deploy_network
 
 networks:
   deploy_network:
     driver: bridge
+
+volumes:
+  postgres_data:

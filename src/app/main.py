@@ -6,6 +6,7 @@ import uvicorn
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -39,6 +40,19 @@ templates = Jinja2Templates(directory=templates_dir)
 env = Environment(loader=FileSystemLoader(templates_dir))
 env.globals["url_for"] = lambda name, **path_params: app.url_path_for(
     name, **path_params
+)
+
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:8080",
+        "http://127.0.0.1:8080",
+        "http://0.0.0.0:8080",
+    ],
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type", "Authorization"],
+    allow_credentials=True,
 )
 
 
@@ -122,7 +136,7 @@ async def predict_happiness(measurement: SurveyMeasurement) -> dict:
 @app.get("/measurements", response_class=HTMLResponse)
 async def read_measurements(request: Request) -> HTMLResponse:
     """
-    Read all saved measurements from the SQLite database and display them in an HTML page.
+    Read all saved measurements from the database and display them in an HTML page.
 
     Returns:
         HTMLResponse: A response containing the HTML representation of all saved measurements.

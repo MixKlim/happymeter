@@ -18,6 +18,7 @@ services:
       dockerfile: Dockerfile.backend
     container_name: backend-container
     environment:
+      REMOTE: True
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: predictions

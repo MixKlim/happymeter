@@ -1,7 +1,9 @@
+from unittest.mock import MagicMock, patch
+
 import pytest
 from sqlalchemy.exc import OperationalError
-from unittest.mock import patch, MagicMock
-from src.app.database import init_db, save_to_db, read_from_db, HappyPrediction
+
+from src.app.database import HappyPrediction, init_db, read_from_db, save_to_db
 
 
 @pytest.fixture

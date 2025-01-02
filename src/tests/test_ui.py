@@ -1,10 +1,12 @@
 import os
+from typing import Any, Dict, Generator, Tuple
+from unittest.mock import MagicMock, patch
+
 import pytest
 import requests
-from unittest.mock import patch, MagicMock
-from typing import Generator, Tuple, Dict, Any
+
 import streamlit as st
-from src.streamlit.ui import get_backend_host, rating_section, predict
+from src.streamlit.ui import get_backend_host, predict, rating_section
 from streamlit.testing.v1 import AppTest
 
 
@@ -41,9 +43,10 @@ def mock_st() -> Generator[Tuple[MagicMock, MagicMock], None, None]:
     Yields:
         Tuple[MagicMock, MagicMock]: Mocked `st.success` and `st.error` methods.
     """
-    with patch.object(st, "success") as mock_success, patch.object(
-        st, "error"
-    ) as mock_error:
+    with (
+        patch.object(st, "success") as mock_success,
+        patch.object(st, "error") as mock_error,
+    ):
         yield mock_success, mock_error
 
 
@@ -159,9 +162,11 @@ def test_predict_no_button_pressed(
 
 def test_rating_section() -> None:
     """Tests the `rating_section` function for correct Streamlit component behavior."""
-    with patch("streamlit.columns") as mock_columns, patch(
-        "streamlit.write"
-    ) as mock_write, patch("src.streamlit.ui.st_star_rating") as mock_star_rating:
+    with (
+        patch("streamlit.columns") as mock_columns,
+        patch("streamlit.write") as mock_write,
+        patch("src.streamlit.ui.st_star_rating") as mock_star_rating,
+    ):
         mock_col_q = MagicMock()
         mock_col_s = MagicMock()
         mock_columns.return_value = (mock_col_q, mock_col_s)

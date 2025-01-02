@@ -9,20 +9,20 @@ ML model based on [Somerville Happiness Survey Data Set](https://archive.ics.uci
 
 ##### To run locally (from root folder):
 
-- create virtual environment: `python -m venv .venv`
-- install dependencies: `poetry install --no-root`
-- launch backend:
-  `make backend`
-- launch front-end:
-  - native (HTML + CSS + JS): [127.0.0.1:8080](http://127.0.0.1:8080/)
-  - streamlit: `make frontend`
-- pre-commit: `make eval`
-- unit tests: `make test`
-- coverage badge: `make cov`
-- end-to-end build (eval + test + cov): `make build`
+- Create virtual environment: `python -m venv .venv`
+- Install dependencies: `poetry install --no-root`
+- Launch backend: `make backend`
+- Launch front-end:
+  - Native (HTML + CSS + JS): [127.0.0.1:8080](http://127.0.0.1:8080/)
+  - Streamlit: `make frontend`
+- Pre-commit: `make eval`
+- Unit tests: `make test`
+- Coverage badge: `make cov`
+- End-to-end build (eval + test + cov): `make build`
 
 ##### Containers:
 
-- docker backend: `make docker-backend`
-- docker frontend: `make docker-frontend`
-- docker compose: `make docker-compose`
+- Populate `.env` with `POSTGRES_USER`, `POSTGRES_PASSWORD` and `POSTGRES_DB`
+- Docker backend: `make docker-backend`
+- Docker frontend: `make docker-frontend`
+- Docker compose: `make docker-compose`

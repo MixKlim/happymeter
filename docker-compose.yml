@@ -1,6 +1,7 @@
 services:
   postgres:
     image: postgres:latest
+    container_name: postgres-container
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:

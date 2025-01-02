@@ -1,7 +1,9 @@
 import os
+
 import requests
-import streamlit as st
 from streamlit_star_rating import st_star_rating
+
+import streamlit as st
 
 
 def get_backend_host() -> str:

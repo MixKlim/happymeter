@@ -1,20 +1,20 @@
 import os
 from pathlib import Path
+from typing import List
 
 import uvicorn
 from fastapi import FastAPI, HTTPException, Request, status
-from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.encoders import jsonable_encoder
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from jinja2 import Template
-from typing import List
+from jinja2 import Environment, FileSystemLoader
 
-from src.app.model import HappyModel, SurveyMeasurement
 from src.app import log_config
-from src.app.logger import logger
 from src.app.database import HappyPrediction, init_db, read_from_db, save_to_db
+from src.app.logger import logger
+from src.app.model import HappyModel, SurveyMeasurement
 
 # Create app and model objects
 app = FastAPI(
@@ -30,8 +30,15 @@ app.mount(
 )
 
 model = HappyModel()
-templates = Jinja2Templates(
-    directory=Path(__file__).resolve().parent.parent.absolute() / "templates"
+
+# Templates directory setup
+templates_dir = Path(__file__).resolve().parent.parent.absolute() / "templates"
+templates = Jinja2Templates(directory=templates_dir)
+
+# Jinja2 environment setup
+env = Environment(loader=FileSystemLoader(templates_dir))
+env.globals["url_for"] = lambda name, **path_params: app.url_path_for(
+    name, **path_params
 )
 
 
@@ -72,7 +79,7 @@ async def standard_validation_exception_handler(
     )
 
 
-logger.info("API is starting up")
+logger.info("API is starting up...")
 
 
 @app.get("/")
@@ -113,7 +120,7 @@ async def predict_happiness(measurement: SurveyMeasurement) -> dict:
 
 
 @app.get("/measurements", response_class=HTMLResponse)
-async def read_measurements() -> HTMLResponse:
+async def read_measurements(request: Request) -> HTMLResponse:
     """
     Read all saved measurements from the SQLite database and display them in an HTML page.
 
@@ -123,46 +130,11 @@ async def read_measurements() -> HTMLResponse:
     # Read data from the database using SQLAlchemy and the HappyPrediction model
     rows: List[HappyPrediction] = read_from_db(DATABASE_URL)
 
-    # HTML Template for rendering rows
-    template = Template("""
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Saved Measurements</title>
-    </head>
-    <body>
-        <h1>Saved Measurements</h1>
-        <table border="1">
-            <tr>
-                <th>ID</th>
-                <th>City Services</th>
-                <th>Housing Costs</th>
-                <th>School Quality</th>
-                <th>Local Policies</th>
-                <th>Maintenance</th>
-                <th>Social Events</th>
-                <th>Prediction</th>
-                <th>Probability</th>
-            </tr>
-            {% for row in rows %}
-            <tr>
-                <td>{{ row.id }}</td>
-                <td>{{ row.city_services }}</td>
-                <td>{{ row.housing_costs }}</td>
-                <td>{{ row.school_quality }}</td>
-                <td>{{ row.local_policies }}</td>
-                <td>{{ row.maintenance }}</td>
-                <td>{{ row.social_events }}</td>
-                <td>{{ row.prediction }}</td>
-                <td>{{ '%.2f' % row.probability }}</td>
-            </tr>
-            {% endfor %}
-        </table>
-    </body>
-    </html>
-    """)
+    # Load the HTML template
+    template = env.get_template("measurements.html")
 
-    html_content = template.render(rows=rows)
+    # Render the template with the rows
+    html_content = template.render(rows=rows, request=request)
     logger.info("Measurement rows rendered successfully!")
     return HTMLResponse(content=html_content)
 

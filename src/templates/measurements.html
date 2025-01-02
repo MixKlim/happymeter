@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+  <head>
+    <meta charset="utf-8">
+    <link href="{{ url_for('static', path='/css/style.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', path='/favicon.ico') }}" rel="icon" type="image/x-icon"/>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
+    <title>measurements</title>
+  </head>
+<body>
+    <h1>Saved Measurements</h1>
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>City Services</th>
+            <th>Housing Costs</th>
+            <th>School Quality</th>
+            <th>Local Policies</th>
+            <th>Maintenance</th>
+            <th>Social Events</th>
+            <th>Prediction</th>
+            <th>Probability</th>
+        </tr>
+        {% for row in rows %}
+        <tr>
+            <td>{{ row.id }}</td>
+            <td>{{ row.city_services }}</td>
+            <td>{{ row.housing_costs }}</td>
+            <td>{{ row.school_quality }}</td>
+            <td>{{ row.local_policies }}</td>
+            <td>{{ row.maintenance }}</td>
+            <td>{{ row.social_events }}</td>
+            <td>{{ row.prediction }}</td>
+            <td>{{ '%.2f' % row.probability }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

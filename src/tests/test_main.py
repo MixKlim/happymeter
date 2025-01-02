@@ -1,12 +1,13 @@
 import os
-import pytest
 from pathlib import Path
-from fastapi.testclient import TestClient
-from unittest.mock import AsyncMock, patch
 from typing import Dict, Generator
-from src.app.main import app, get_database_url
-from src.app.database import HappyPrediction
+from unittest.mock import AsyncMock, patch
 
+import pytest
+from fastapi.testclient import TestClient
+
+from src.app.database import HappyPrediction
+from src.app.main import app, get_database_url
 
 client = TestClient(app=app)
 

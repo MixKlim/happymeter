@@ -1,8 +1,10 @@
-import pytest
+from unittest.mock import MagicMock, patch
+
 import numpy as np
 import pandas as pd
-from unittest.mock import patch, MagicMock
-from src.app.model import SurveyMeasurement, HappyModel
+import pytest
+
+from src.app.model import HappyModel, SurveyMeasurement
 
 
 # Test SurveyMeasurement

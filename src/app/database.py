@@ -1,6 +1,8 @@
 from typing import Dict, List, Type
-from sqlalchemy import create_engine, Column, Integer, Float
-from sqlalchemy.orm import sessionmaker, declarative_base
+
+from sqlalchemy import Column, Float, Integer, create_engine
+from sqlalchemy.orm import declarative_base, sessionmaker
+
 from src.app.logger import logger
 
 # Define the Base class for SQLAlchemy models

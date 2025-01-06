@@ -1,5 +1,10 @@
 FROM python:3.11-buster
 
+# Install sqlite3 and its dependencies
+RUN apt-get update && \
+    apt-get install -y sqlite3 libsqlite3-dev && \
+    rm -rf /var/lib/apt/lists/*
+
 RUN pip install poetry==1.8.4
 
 ENV POETRY_NO_INTERACTION=1 \
@@ -23,6 +28,10 @@ COPY src/model src/model
 COPY src/static src/static
 
 COPY src/templates src/templates
+
+ENV DEPLOY=AZURE
+
+VOLUME ["/mnt/database"]
 
 EXPOSE 8080
 

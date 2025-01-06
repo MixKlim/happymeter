@@ -14,12 +14,13 @@ services:
       - deploy_network
 
   backend:
+    image: happymeter-backend:latest
     build:
       context: .
       dockerfile: Dockerfile.backend
     container_name: backend-container
     environment:
-      REMOTE: True
+      DEPLOY: DOCKER
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
@@ -31,6 +32,7 @@ services:
       - deploy_network
 
   frontend:
+    image: happymeter-frontend:latest
     build:
       context: .
       dockerfile: Dockerfile.frontend
@@ -38,7 +40,7 @@ services:
     ports:
       - 8501:8501
     environment:
-      REMOTE: True
+      DEPLOY: DOCKER
     depends_on:
       - backend
     networks:

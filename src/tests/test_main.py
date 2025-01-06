@@ -63,19 +63,29 @@ def mock_read_from_db() -> Generator[AsyncMock, None, None]:
 
 # Test cases
 @pytest.mark.parametrize(
-    "remote_env, expected_url",
+    "type_deployment, expected_url",
     [
         (
-            "",  # SQLite when REMOTE is not set
+            "LOCAL",
             f"sqlite:///{Path(__file__).resolve().parent.parent.absolute() / 'database' / 'predictions.db'}",
         ),
         (
-            "true",  # PostgreSQL when REMOTE is set
-            "postgresql://test_user:test_password@postgres/test_db",
+            "",
+            f"sqlite:///{Path(__file__).resolve().parent.parent.absolute() / 'database' / 'predictions.db'}",
+        ),
+        (
+            "DOCKER",
+            "postgresql://test_user:test_password@postgres/test.db",
+        ),
+        (
+            "AZURE",
+            "sqlite:////mnt/database/predictions.db",
         ),
     ],
 )
-def test_get_database_url(mock_env: None, remote_env: str, expected_url: str) -> None:
+def test_get_database_url(
+    mock_env: None, type_deployment: str, expected_url: str
+) -> None:
     """
     Parametrized test for getting the correct database URL based on the REMOTE environment variable.
 
@@ -85,16 +95,17 @@ def test_get_database_url(mock_env: None, remote_env: str, expected_url: str) ->
         expected_url (str): The expected URL to be returned by get_database_url.
     """
     # Mock environment variables based on the parameterized test case
-    if remote_env == "":
-        os.environ["REMOTE"] = ""
-    else:
+
+    if type_deployment == "DOCKER":
         os.environ["REMOTE"] = "true"
         os.environ["POSTGRES_USER"] = "test_user"
         os.environ["POSTGRES_PASSWORD"] = "test_password"
-        os.environ["POSTGRES_DB"] = "test_db"
+        os.environ["POSTGRES_DB"] = "test.db"
+    else:
+        os.environ["REMOTE"] = ""
 
     # Call the function
-    result = get_database_url()
+    result = get_database_url(type_deployment)
 
     # Assert that the returned URL matches the expected URL
     assert result == expected_url, f"Expected {expected_url}, but got {result}"
@@ -207,7 +218,7 @@ def test_read_measurements(
     """
 
     # Act
-    response = client.get("/measurements")
+    response = client.get("/data")
 
     # Assert
     assert (

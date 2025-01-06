@@ -38,13 +38,13 @@ build: eval test cov
 
 docker-backend:
 	@echo "Creating docker image and container for backend"
-	docker build -t backend-image -f Dockerfile.backend .
-	docker run --name backend-container -p 8080:8080 --rm backend-image
+	docker build -t happymeter-backend -f Dockerfile.backend .
+	docker run --name backend-container -p 8080:8080 --rm happymeter-backend
 
 docker-frontend:
 	@echo "Creating docker image and container for frontend"
-	docker build -t frontend-image -f Dockerfile.frontend .
-	docker run --name frontend-container -p 8501:8501 --rm frontend-image
+	docker build -t happymeter-frontend -f Dockerfile.frontend .
+	docker run --name frontend-container -p 8501:8501 --rm happymeter-frontend
 
 docker-compose:
 	@echo "Running docker compose"

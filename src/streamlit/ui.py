@@ -5,19 +5,34 @@ from streamlit_star_rating import st_star_rating
 
 import streamlit as st
 
-
-def get_backend_host() -> str:
-    """Check whether local deployment or not."""
-    remote_deployment = os.getenv("REMOTE", "")
-    return "backend" if bool(remote_deployment) else "127.0.0.1"
+# Read environmental variables
+type_deployment = os.getenv("DEPLOY", "LOCAL")
 
 
-def predict(data: dict, predict_button: bool) -> None:
+def get_backend_host(type_deployment: str) -> str:
+    """
+    Get backend host URL.
+
+    Args:
+        type_deployment (str): type deployment
+
+    Returns:
+        str: backend host url.
+
+    """
+    if type_deployment == "DOCKER":
+        return "backend"
+    elif type_deployment == "AZURE":
+        return ""  # TODO
+    return "127.0.0.1"
+
+
+def predict(type_deployment: str, data: dict, predict_button: bool) -> None:
     """Display proper message based on model prediction."""
     if predict_button:
         try:
             response = requests.post(
-                f"http://{get_backend_host()}:8080/predict", json=data
+                f"http://{get_backend_host(type_deployment)}:8080/predict", json=data
             )
             response.raise_for_status()
             response_dict = response.json()
@@ -111,7 +126,7 @@ def main() -> None:
         predict_button = st.button(label="Submit your ratings")
 
     # Predict results
-    predict(ratings, predict_button)
+    predict(type_deployment, ratings, predict_button)
 
 
 if __name__ == "__main__":

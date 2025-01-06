@@ -1,0 +1,181 @@
+id: /subscriptions/617a685f-a753-4e58-8fdf-4f864d06b4a6/resourceGroups/happymeter/providers/Microsoft.App/containerapps/happymeter-backend
+identity:
+  principalId: b13cdb03-9847-4cd7-a62e-ffaf93fc04e3
+  tenantId: b72c2eb3-9f35-498d-872e-7b44d8849efb
+  type: SystemAssigned
+location: West Europe
+name: happymeter-backend
+properties:
+  configuration:
+    activeRevisionsMode: Single
+    dapr: null
+    ingress:
+      additionalPortMappings: null
+      allowInsecure: true
+      clientCertificateMode: null
+      corsPolicy: null
+      customDomains: null
+      exposedPort: 0
+      external: true
+      fqdn: happymeter-backend.nicewave-59cc8a44.westeurope.azurecontainerapps.io
+      ipSecurityRestrictions: null
+      stickySessions: null
+      targetPort: 8080
+      traffic:
+      - latestRevision: true
+        weight: 100
+      transport: Auto
+    maxInactiveRevisions: null
+    registries:
+    - identity: ''
+      passwordSecretRef: happyregistryazurecrio-happyregistry
+      server: happyregistry.azurecr.io
+      username: happyregistry
+    secrets:
+    - name: happyregistryazurecrio-happyregistry
+    service: null
+  customDomainVerificationId: 1FFE9F115B6E9D23461BA623714CF3F007262EAE49CAA86CF2F0333DC027A103
+  delegatedIdentities: []
+  environmentId: /subscriptions/617a685f-a753-4e58-8fdf-4f864d06b4a6/resourceGroups/happymeter/providers/Microsoft.App/managedEnvironments/happymeter
+  eventStreamEndpoint: https://westeurope.azurecontainerapps.dev/subscriptions/617a685f-a753-4e58-8fdf-4f864d06b4a6/resourceGroups/happymeter/containerApps/happymeter-backend/eventstream
+  latestReadyRevisionName: happymeter-backend--mr7fbxq
+  latestRevisionFqdn: happymeter-backend--mr7fbxq.nicewave-59cc8a44.westeurope.azurecontainerapps.io
+  latestRevisionName: happymeter-backend--mr7fbxq
+  managedEnvironmentId: /subscriptions/617a685f-a753-4e58-8fdf-4f864d06b4a6/resourceGroups/happymeter/providers/Microsoft.App/managedEnvironments/happymeter
+  outboundIpAddresses:
+  - 51.137.8.84
+  - 51.137.8.250
+  - 98.64.213.69
+  - 4.175.48.136
+  - 98.64.208.171
+  - 98.64.213.254
+  - 98.64.209.113
+  - 98.64.211.186
+  - 4.175.51.174
+  - 98.64.215.90
+  - 4.175.51.59
+  - 98.64.210.120
+  - 40.114.177.194
+  - 40.114.177.222
+  - 20.8.61.140
+  - 20.23.204.52
+  - 4.180.170.19
+  - 4.180.170.176
+  - 4.180.170.198
+  - 4.180.170.209
+  - 20.103.135.29
+  - 20.103.134.29
+  - 20.4.8.235
+  - 20.4.9.8
+  - 20.4.9.12
+  - 20.4.9.6
+  - 20.4.9.0
+  - 20.4.9.2
+  - 108.142.173.180
+  - 20.4.9.17
+  - 20.4.8.250
+  - 20.4.8.112
+  - 20.103.132.54
+  - 20.16.47.111
+  - 20.234.178.191
+  - 20.234.178.202
+  - 20.16.42.139
+  - 20.234.178.176
+  - 20.234.178.189
+  - 20.234.178.116
+  - 20.234.178.197
+  - 20.234.178.33
+  - 20.234.178.156
+  - 20.103.134.224
+  - 108.141.252.113
+  - 108.141.252.123
+  - 108.141.60.221
+  - 108.141.61.84
+  - 108.141.61.64
+  - 108.141.60.213
+  - 4.175.88.205
+  - 4.175.89.31
+  - 4.175.131.66
+  - 4.175.131.215
+  - 4.175.131.90
+  - 4.175.131.212
+  - 4.175.131.65
+  - 4.175.131.140
+  - 4.175.131.232
+  - 4.175.131.161
+  - 4.175.130.3
+  - 4.175.131.35
+  - 4.175.89.19
+  - 4.175.89.7
+  - 20.31.237.60
+  - 20.54.209.151
+  - 57.153.74.153
+  - 57.153.72.51
+  - 57.153.74.169
+  - 57.153.72.156
+  - 4.175.135.12
+  - 108.141.36.217
+  - 4.175.134.236
+  - 4.175.135.1
+  - 4.175.134.222
+  - 4.175.134.119
+  - 4.175.134.181
+  - 4.175.134.76
+  - 4.175.134.240
+  - 4.175.134.184
+  - 20.61.156.164
+  - 20.61.156.185
+  - 20.61.156.214
+  - 20.61.156.178
+  - 20.61.156.182
+  - 20.61.156.102
+  - 20.61.156.93
+  - 20.61.156.117
+  - 20.61.156.159
+  - 20.61.156.194
+  - 20.61.156.196
+  - 20.61.156.154
+  - 20.61.156.206
+  - 20.61.156.198
+  - 20.61.156.161
+  - 20.61.156.213
+  - 20.61.156.105
+  - 20.61.155.144
+  - 20.61.156.166
+  - 20.61.156.100
+  - 108.142.3.134
+  provisioningState: Succeeded
+  runningStatus: Running
+  template:
+    volumes:
+    - name: happymeter-volume
+      storageName: happymount
+      storageType: AzureFile
+    containers:
+    - image: happyregistry.azurecr.io/happymeter-backend:8
+      name: happymeter-backend
+      volumeMounts:
+      - volumeName: happymeter-volume
+        mountPath: /mnt/database
+      resources:
+        cpu: 0.5
+        ephemeralStorage: 2Gi
+        memory: 1Gi
+    initContainers: null
+    revisionSuffix: ''
+    scale:
+      maxReplicas: 10
+      minReplicas: null
+      rules: null
+    serviceBinds: null
+    terminationGracePeriodSeconds: null
+  workloadProfileName: Consumption
+resourceGroup: happymeter
+systemData:
+  createdAt: '2025-01-05T12:13:04.8220215'
+  createdBy: K.Mikhailov@cimsolutions.nl
+  createdByType: User
+  lastModifiedAt: '2025-01-05T15:11:11.2428474'
+  lastModifiedBy: K.Mikhailov@cimsolutions.nl
+  lastModifiedByType: User
+type: Microsoft.App/containerApps

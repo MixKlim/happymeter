@@ -10,32 +10,6 @@ from src.streamlit.ui import get_backend_host, predict, rating_section
 from streamlit.testing.v1 import AppTest
 
 
-# Test the application execution
-def test_app_run() -> None:
-    """Tests that the Streamlit application runs without exceptions."""
-    at = AppTest.from_file("src/streamlit/ui.py").run()
-    assert not at.exception
-
-
-@pytest.mark.parametrize(
-    "remote_env, expected_host",
-    [
-        ("", "127.0.0.1"),
-        ("True", "backend"),
-        ("AnotherValue", "backend"),
-    ],
-)
-def test_get_backend_host(remote_env: str, expected_host: str) -> None:
-    """Tests the `get_backend_host` function with various REMOTE environment values.
-
-    Args:
-        remote_env (str): The REMOTE environment variable value.
-        expected_host (str): The expected backend host.
-    """
-    with patch.dict(os.environ, {"REMOTE": remote_env}):
-        assert get_backend_host() == expected_host
-
-
 @pytest.fixture(scope="function")
 def mock_st() -> Generator[Tuple[MagicMock, MagicMock], None, None]:
     """Provides mocked Streamlit success and error methods.
@@ -48,6 +22,33 @@ def mock_st() -> Generator[Tuple[MagicMock, MagicMock], None, None]:
         patch.object(st, "error") as mock_error,
     ):
         yield mock_success, mock_error
+
+
+# Test the application execution
+def test_app_run() -> None:
+    """Tests that the Streamlit application runs without exceptions."""
+    at = AppTest.from_file("src/streamlit/ui.py").run()
+    assert not at.exception
+
+
+@pytest.mark.parametrize(
+    "type_deployment, expected_host",
+    [
+        ("LOCAL", "127.0.0.1"),
+        ("", "127.0.0.1"),
+        ("DOCKER", "backend"),
+        ("AZURE", ""),
+    ],
+)
+def test_get_backend_host(type_deployment: str, expected_host: str) -> None:
+    """Tests the `get_backend_host` function with various type_deployment environment values.
+
+    Args:
+        type_deployment (str): The type_deployment environment variable value.
+        expected_host (str): The expected backend host.
+    """
+    with patch.dict(os.environ, {"type_deployment": type_deployment}):
+        assert get_backend_host(type_deployment) == expected_host
 
 
 def setup_mock_response(
@@ -112,7 +113,7 @@ def test_predict(
     """
     setup_mock_response(mock_post, prediction, probability)
 
-    predict(data, predict_button=True)
+    predict(type_deployment="LOCAL", data=data, predict_button=True)
 
     if is_success:
         mock_st[0].assert_called_once_with(expected_message)
@@ -137,7 +138,7 @@ def test_predict_failure(
     mock_post.return_value = mock_response
 
     data = {"key": "value"}
-    predict(data, predict_button=True)
+    predict(type_deployment="LOCAL", data=data, predict_button=True)
     mock_st[1].assert_called_once_with(
         "Failed to connect to the prediction service: Server Error"
     )
@@ -154,8 +155,7 @@ def test_predict_no_button_pressed(
         mock_st (Tuple[MagicMock, MagicMock]): Mocked Streamlit methods.
     """
     data = {"key": "value"}
-    predict_button = False
-    predict(data, predict_button)
+    predict(type_deployment="LOCAL", data=data, predict_button=False)
     mock_st[0].assert_not_called()
     mock_st[1].assert_not_called()
 

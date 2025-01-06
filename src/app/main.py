@@ -17,6 +17,9 @@ from src.app.database import HappyPrediction, init_db, read_from_db, save_to_db
 from src.app.logger import logger
 from src.app.model import HappyModel, SurveyMeasurement
 
+# Read environmental variables
+type_deployment = os.getenv("DEPLOY", "LOCAL")
+
 # Create app and model objects
 app = FastAPI(
     title="Happiness Prediction",
@@ -38,34 +41,31 @@ templates = Jinja2Templates(directory=templates_dir)
 
 # Jinja2 environment setup
 env = Environment(loader=FileSystemLoader(templates_dir))
-env.globals["url_for"] = lambda name, **path_params: app.url_path_for(
-    name, **path_params
-)
 
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:8080",
-        "http://127.0.0.1:8080",
-        "http://0.0.0.0:8080",
-    ],
+    allow_origins=["*"],  # TODO: limit
     allow_methods=["GET", "POST"],
     allow_headers=["Content-Type", "Authorization"],
     allow_credentials=True,
 )
 
 
-def get_database_url() -> str:
+def get_database_url(type_deployment: str) -> str:
     """
     Check what type of database to use. Either local (SQLite) or remote (PostgreSQL).
+
+    Args:
+        type_deployment (str): type deployment
 
     Returns:
         str: database url.
     """
-    remote_deployment = os.getenv("REMOTE", "")
-    if bool(remote_deployment):
+    if type_deployment == "DOCKER":
         return f'postgresql://{os.getenv("POSTGRES_USER")}:{os.getenv("POSTGRES_PASSWORD")}@postgres/{os.getenv("POSTGRES_DB")}'
+    elif type_deployment == "AZURE":
+        return "sqlite:////mnt/database/predictions.db"
     else:
         DB_PATH = (
             Path(__file__).resolve().parent.parent.absolute()
@@ -75,7 +75,7 @@ def get_database_url() -> str:
         return f"sqlite:///{DB_PATH}"
 
 
-DATABASE_URL = get_database_url()
+DATABASE_URL = get_database_url(type_deployment)
 DB_INITIALIZED = init_db(DATABASE_URL)
 
 
@@ -101,7 +101,10 @@ async def root(request: Request) -> None:
     """
     Main page for ratings.
     """
-    return templates.TemplateResponse(request=request, name="index.html")
+    return templates.TemplateResponse(
+        request=request,
+        name="index.html",
+    )
 
 
 @app.post("/predict")
@@ -133,7 +136,7 @@ async def predict_happiness(measurement: SurveyMeasurement) -> dict:
         raise HTTPException(status_code=500, detail="ERR_UNEXPECTED")
 
 
-@app.get("/measurements", response_class=HTMLResponse)
+@app.get("/data", response_class=HTMLResponse)
 async def read_measurements(request: Request) -> HTMLResponse:
     """
     Read all saved measurements from the database and display them in an HTML page.
@@ -145,7 +148,7 @@ async def read_measurements(request: Request) -> HTMLResponse:
     rows: List[HappyPrediction] = read_from_db(DATABASE_URL)
 
     # Load the HTML template
-    template = env.get_template("measurements.html")
+    template = env.get_template("data.html")
 
     # Render the template with the rows
     html_content = template.render(rows=rows, request=request)

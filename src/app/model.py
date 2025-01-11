@@ -9,6 +9,14 @@ from sklearn.ensemble import GradientBoostingClassifier
 class SurveyMeasurement(BaseModel):
     """
     Class which describes a single survey measurement.
+
+    Attributes:
+        city_services (int): Information about the city services (1 to 5).
+        housing_costs (int): Cost of housing (1 to 5).
+        school_quality (int): Overall quality of public schools (1 to 5).
+        local_policies (int): Trust in the local police (1 to 5).
+        maintenance (int): Maintenance of streets and sidewalks (1 to 5).
+        social_events (int): Availability of social community events (1 to 5).
     """
 
     city_services: int = Field(
@@ -74,15 +82,24 @@ class HappyPrediction(SurveyMeasurement):
 class HappyModel:
     """
     Class for training the model and making predictions.
+
+    Attributes:
+        df_fname_ (str): The filename of the dataset.
+        df (DataFrame): The loaded dataset.
+        model_fname_ (str): The filename of the model.
+        model (GradientBoostingClassifier): The trained machine learning model.
     """
 
     def __init__(
         self, data_fname: str = "happy_data.csv", model_fname: str = "happy_model.pkl"
     ) -> None:
         """
-        Class constructor, loads the dataset and loads the model
-        if exists. If not, calls the _train_model method and
-        saves the model.
+        Class constructor, loads the dataset and the model if it exists.
+        If the model does not exist, it trains a new model and saves it.
+
+        Args:
+            data_fname (str): The filename of the dataset.
+            model_fname (str): The filename of the model.
         """
         self.df_fname_ = data_fname
         self.df = pd.read_csv(
@@ -106,7 +123,10 @@ class HappyModel:
 
     def _train_model(self) -> GradientBoostingClassifier:
         """
-        Perform model training using the GradientBoostingClassifier classifier.
+        Train a GradientBoostingClassifier model using the dataset.
+
+        Returns:
+            GradientBoostingClassifier: The trained model.
         """
         X = self.df.drop("happiness", axis=1)
         y = self.df["happiness"]
@@ -133,8 +153,19 @@ class HappyModel:
         social_events: int,
     ) -> tuple[int, float]:
         """
-        Make a prediction based on the user-entered data
+        Make a prediction based on the user-entered data.
         Returns the predicted happiness with its respective probability.
+
+        Args:
+            city_services (int): Rating for city services.
+            housing_costs (int): Rating for housing costs.
+            school_quality (int): Rating for school quality.
+            local_policies (int): Rating for trust in local policies.
+            maintenance (int): Rating for maintenance of infrastructure.
+            social_events (int): Rating for availability of social events.
+
+        Returns:
+            tuple[int, float]: The prediction (happiness value) and the associated probability.
         """
         data_in = [
             [

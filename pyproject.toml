@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "happymeter"
-version = "2.0.0"
+version = "3.0.0"
 description = "Find out how happy you are"
 authors = ["Klim Mikhailov <mixklim@gmail.com>"]
 license = "MIT"

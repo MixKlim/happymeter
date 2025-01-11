@@ -1,5 +1,5 @@
 import os
-from typing import Any, Dict, Generator, Tuple
+from typing import Any, Dict, Generator, Optional, Tuple
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -8,32 +8,6 @@ import requests
 import streamlit as st
 from src.streamlit.ui import get_backend_host, predict, rating_section
 from streamlit.testing.v1 import AppTest
-
-
-# Test the application execution
-def test_app_run() -> None:
-    """Tests that the Streamlit application runs without exceptions."""
-    at = AppTest.from_file("src/streamlit/ui.py").run()
-    assert not at.exception
-
-
-@pytest.mark.parametrize(
-    "remote_env, expected_host",
-    [
-        ("", "127.0.0.1"),
-        ("True", "backend"),
-        ("AnotherValue", "backend"),
-    ],
-)
-def test_get_backend_host(remote_env: str, expected_host: str) -> None:
-    """Tests the `get_backend_host` function with various REMOTE environment values.
-
-    Args:
-        remote_env (str): The REMOTE environment variable value.
-        expected_host (str): The expected backend host.
-    """
-    with patch.dict(os.environ, {"REMOTE": remote_env}):
-        assert get_backend_host() == expected_host
 
 
 @pytest.fixture(scope="function")
@@ -67,6 +41,46 @@ def setup_mock_response(
         "probability": probability,
     }
     mock_post.return_value = mock_response
+
+
+# Test cases
+def test_app_run() -> None:
+    """Tests that the Streamlit application runs without exceptions."""
+    at = AppTest.from_file("src/streamlit/ui.py").run()
+    assert not at.exception
+
+
+@pytest.mark.parametrize(
+    "env_var_value, expected_output",
+    [
+        ("backend:5000", "backend:5000"),
+        (None, "127.0.0.1:8080"),
+    ],
+)
+def test_get_backend_host(env_var_value: Optional[str], expected_output: str) -> None:
+    """
+    Test the `get_backend_host` function with various BACKEND_HOST environment variable settings.
+
+    Args:
+        env_var_value (Optional[str]): The value to set for the BACKEND_HOST environment variable.
+        expected_output (str): The expected output of the function.
+    """
+    # Backup the current environment variables
+    original_env = dict(os.environ)
+
+    # Clear BACKEND_HOST and set the new value if provided
+    if env_var_value is not None:
+        os.environ["BACKEND_HOST"] = env_var_value
+    else:
+        os.environ.pop("BACKEND_HOST", None)  # Remove BACKEND_HOST if set
+
+    try:
+        # Call the function and assert the result
+        assert get_backend_host() == expected_output
+    finally:
+        # Restore the original environment variables
+        os.environ.clear()
+        os.environ.update(original_env)
 
 
 @patch("requests.post")
@@ -112,7 +126,7 @@ def test_predict(
     """
     setup_mock_response(mock_post, prediction, probability)
 
-    predict(data, predict_button=True)
+    predict(backend_host="backend_host", data=data, predict_button=True)
 
     if is_success:
         mock_st[0].assert_called_once_with(expected_message)
@@ -121,25 +135,60 @@ def test_predict(
 
 
 @patch("requests.post")
+def test_predict_http_fallback(
+    mock_post: MagicMock, mock_st: Tuple[MagicMock, MagicMock]
+) -> None:
+    """Tests the predict function when the HTTPS request fails and the fallback to HTTP succeeds.
+
+    Args:
+        mock_st: The mocked Streamlit success and error methods.
+        mock_post: The mocked requests.post method.
+    """
+
+    # Simulate SSL error for the first call (HTTPS request)
+    # The second call will return a mocked valid response
+    mock_response = MagicMock()
+    mock_response.raise_for_status.return_value = None
+    mock_response.json.return_value = {"prediction": True, "probability": 0.75}
+
+    # Set the side effect to simulate the SSL error on HTTPS, then return the mocked response for the fallback HTTP
+    mock_post.side_effect = [
+        requests.exceptions.SSLError("SSL Error"),  # Simulate SSL error on HTTPS
+        mock_response,  # Return a valid mocked response for the fallback HTTP request
+    ]
+
+    # Run the predict function
+    data = {"key": "value"}
+    predict(backend_host="backend_host", data=data, predict_button=True)
+
+    # Assert that the success method was called with the correct message
+    mock_st[0].assert_called_once_with("Good news - you are happy! We're 75% sure 😃")
+
+
+@patch("requests.post")
 def test_predict_failure(
     mock_post: MagicMock, mock_st: Tuple[MagicMock, MagicMock]
 ) -> None:
-    """Tests the `predict` function for a failed prediction service call.
+    """Tests the predict function when both HTTPS and HTTP requests fail.
 
     Args:
-        mock_post (MagicMock): Mocked `requests.post` method.
-        mock_st (Tuple[MagicMock, MagicMock]): Mocked Streamlit methods.
+        mock_st: The mocked Streamlit success and error methods.
+        mock_post: The mocked requests.post method.
     """
-    mock_response = MagicMock()
-    mock_response.raise_for_status.side_effect = requests.exceptions.RequestException(
-        "Server Error"
-    )
-    mock_post.return_value = mock_response
+    mock_post.side_effect = [
+        requests.exceptions.SSLError("SSL Error"),  # Simulate SSL error on HTTPS
+        requests.exceptions.ConnectionError(
+            "Connection Error"
+        ),  # Simulate connection error on HTTP
+    ]
 
+    # Run the predict function
     data = {"key": "value"}
-    predict(data, predict_button=True)
+    predict(backend_host="backend_host", data=data, predict_button=True)
+
+    # Assert that the error method was called with the correct message
     mock_st[1].assert_called_once_with(
-        "Failed to connect to the prediction service: Server Error"
+        "Failed to connect to the prediction service: Connection Error"
     )
 
 
@@ -154,8 +203,7 @@ def test_predict_no_button_pressed(
         mock_st (Tuple[MagicMock, MagicMock]): Mocked Streamlit methods.
     """
     data = {"key": "value"}
-    predict_button = False
-    predict(data, predict_button)
+    predict(backend_host="test", data=data, predict_button=False)
     mock_st[0].assert_not_called()
     mock_st[1].assert_not_called()
 

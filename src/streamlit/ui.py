@@ -7,19 +7,39 @@ import streamlit as st
 
 
 def get_backend_host() -> str:
-    """Check whether local deployment or not."""
-    remote_deployment = os.getenv("REMOTE", "")
-    return "backend" if bool(remote_deployment) else "127.0.0.1"
+    """
+    Get the backend host URL from the environment variables or use a default value.
+
+    Returns:
+        str: The backend host URL.
+    """
+    return os.getenv("BACKEND_HOST", "127.0.0.1:8080")
 
 
-def predict(data: dict, predict_button: bool) -> None:
-    """Display proper message based on model prediction."""
+def predict(backend_host: str, data: dict, predict_button: bool) -> None:
+    """
+    Send a prediction request to the backend and display the results in the Streamlit app.
+
+    Args:
+        backend_host (str): The URL of the backend server.
+        data (dict): The input data for the prediction.
+        predict_button (bool): Whether the prediction button was clicked.
+    """
     if predict_button:
+        response = None
         try:
-            response = requests.post(
-                f"http://{get_backend_host()}:8080/predict", json=data
-            )
-            response.raise_for_status()
+            # Attempt HTTPS connection
+            response = requests.post(f"https://{backend_host}/predict", json=data)
+            response.raise_for_status()  # Check if the request was successful
+        except (requests.exceptions.SSLError, requests.exceptions.ConnectionError):
+            try:
+                # Fallback to HTTP
+                response = requests.post(f"http://{backend_host}/predict", json=data)
+                response.raise_for_status()  # Check if the fallback request was successful
+            except requests.exceptions.RequestException as e:
+                st.error(f"Failed to connect to the prediction service: {e}")
+
+        if response:
             response_dict = response.json()
             prediction = response_dict["prediction"]
             probability = response_dict["probability"]
@@ -32,15 +52,23 @@ def predict(data: dict, predict_button: bool) -> None:
                 st.error(
                     f"Oh no, you seem to be unhappy! At least for {probability:.0%} 😟"
                 )
-        except requests.exceptions.RequestException as e:
-            st.error(f"Failed to connect to the prediction service: {e}")
 
 
 def rating_section(
     prompt: str, key: str, text_font_size: int, star_rating_size: int
 ) -> int:
-    """Reusable component for a rating section with question and stars on the same line."""
+    """
+    Display a rating section with a question prompt and star rating.
 
+    Args:
+        prompt (str): The question prompt to display.
+        key (str): The unique key for the star rating component.
+        text_font_size (int): The font size for the question prompt.
+        star_rating_size (int): The size of the star rating component.
+
+    Returns:
+        int: The selected star rating value.
+    """
     col_q, col_s = st.columns([3, 1])
     with col_q:
         st.write(
@@ -59,6 +87,9 @@ def rating_section(
 
 
 def main() -> None:
+    """
+    Main function to run the Streamlit app, gather user input, and display the results.
+    """
     # Page configuration
     st.set_page_config("happymeter", page_icon="😊", layout="wide")
 
@@ -105,13 +136,14 @@ def main() -> None:
     }
 
     # Submit button centered
-    st.markdown("<br>", unsafe_allow_html=True)  # Small spacer
+    st.markdown("<br>", unsafe_allow_html=True)
     col1, col2, col3 = st.columns([4, 2, 4])
     with col2:
         predict_button = st.button(label="Submit your ratings")
 
     # Predict results
-    predict(ratings, predict_button)
+    backend_host = get_backend_host()
+    predict(backend_host, ratings, predict_button)
 
 
 if __name__ == "__main__":

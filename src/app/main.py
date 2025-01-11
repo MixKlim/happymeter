@@ -38,18 +38,11 @@ templates = Jinja2Templates(directory=templates_dir)
 
 # Jinja2 environment setup
 env = Environment(loader=FileSystemLoader(templates_dir))
-env.globals["url_for"] = lambda name, **path_params: app.url_path_for(
-    name, **path_params
-)
 
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:8080",
-        "http://127.0.0.1:8080",
-        "http://0.0.0.0:8080",
-    ],
+    allow_origins=["*"],  # TODO: limit
     allow_methods=["GET", "POST"],
     allow_headers=["Content-Type", "Authorization"],
     allow_credentials=True,
@@ -61,11 +54,10 @@ def get_database_url() -> str:
     Check what type of database to use. Either local (SQLite) or remote (PostgreSQL).
 
     Returns:
-        str: database url.
+        str: The database URL to be used by the application.
     """
-    remote_deployment = os.getenv("REMOTE", "")
-    if bool(remote_deployment):
-        return f'postgresql://{os.getenv("POSTGRES_USER")}:{os.getenv("POSTGRES_PASSWORD")}@postgres/{os.getenv("POSTGRES_DB")}'
+    if "POSTGRES_HOST" in os.environ and os.environ["POSTGRES_HOST"]:
+        return f'postgresql://{os.environ["POSTGRES_USER"]}:{os.environ["POSTGRES_PASSWORD"]}@{os.environ["POSTGRES_HOST"]}/{os.environ["POSTGRES_DB"]}'
     else:
         DB_PATH = (
             Path(__file__).resolve().parent.parent.absolute()
@@ -84,7 +76,16 @@ DB_INITIALIZED = init_db(DATABASE_URL)
 async def standard_validation_exception_handler(
     request: Request, exc: RequestValidationError
 ) -> JSONResponse:
-    # Log the validation error details
+    """
+    Handles validation errors for incoming requests.
+
+    Args:
+        request (Request): The request object that caused the validation error.
+        exc (RequestValidationError): The validation error details.
+
+    Returns:
+        JSONResponse: A JSON response with details of the validation error.
+    """
     logger.error(f"422 Validation Error: {exc.errors()} | Request Body: {exc.body}")
 
     return JSONResponse(
@@ -100,8 +101,17 @@ logger.info("API is starting up...")
 async def root(request: Request) -> None:
     """
     Main page for ratings.
+
+    Args:
+        request (Request): The incoming request object.
+
+    Returns:
+        TemplateResponse: Renders the main index page.
     """
-    return templates.TemplateResponse(request=request, name="index.html")
+    return templates.TemplateResponse(
+        request=request,
+        name="index.html",
+    )
 
 
 @app.post("/predict")
@@ -109,6 +119,12 @@ async def predict_happiness(measurement: SurveyMeasurement) -> dict:
     """
     Expose the prediction functionality, make a prediction from the passed
     JSON data and return the prediction with the confidence.
+
+    Args:
+        measurement (SurveyMeasurement): The survey data used to make the prediction.
+
+    Returns:
+        dict: A dictionary containing the prediction and its probability.
     """
     try:
         data = measurement.dict()
@@ -133,19 +149,21 @@ async def predict_happiness(measurement: SurveyMeasurement) -> dict:
         raise HTTPException(status_code=500, detail="ERR_UNEXPECTED")
 
 
-@app.get("/measurements", response_class=HTMLResponse)
+@app.get("/data", response_class=HTMLResponse)
 async def read_measurements(request: Request) -> HTMLResponse:
     """
     Read all saved measurements from the database and display them in an HTML page.
 
+    Args:
+        request (Request): The incoming request object.
+
     Returns:
         HTMLResponse: A response containing the HTML representation of all saved measurements.
     """
-    # Read data from the database using SQLAlchemy and the HappyPrediction model
     rows: List[HappyPrediction] = read_from_db(DATABASE_URL)
 
     # Load the HTML template
-    template = env.get_template("measurements.html")
+    template = env.get_template("data.html")
 
     # Render the template with the rows
     html_content = template.render(rows=rows, request=request)

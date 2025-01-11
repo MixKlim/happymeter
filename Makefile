@@ -3,6 +3,7 @@ SHELL=CMD
 help:
 	@echo "  backend           - Run the backend using uvicorn"
 	@echo "  frontend          - Run the frontend using Streamlit"
+	@echo "  cache             - Clear poetry's cache"
 	@echo "  eval              - Run pre-commit checks on all files"
 	@echo "  test              - Run unit tests with pytest"
 	@echo "  cov               - Generate coverage report and badge"
@@ -18,6 +19,10 @@ backend:
 frontend:
 	@echo "Running frontend"
 	poetry run streamlit run src/streamlit/ui.py --server.address 127.0.0.1 --server.port 8501
+
+cache:
+	@echo "Clear poetry's cache"
+	poetry cache clear PyPI --all --no-interaction
 
 eval:
 	@echo "Running pre-commit"
@@ -38,13 +43,13 @@ build: eval test cov
 
 docker-backend:
 	@echo "Creating docker image and container for backend"
-	docker build -t backend-image -f Dockerfile.backend .
-	docker run --name backend-container -p 8080:8080 --rm backend-image
+	docker build -t happymeter-backend -f Dockerfile.backend .
+	docker run --name backend-container -p 8080:8080 --rm happymeter-backend
 
 docker-frontend:
 	@echo "Creating docker image and container for frontend"
-	docker build -t frontend-image -f Dockerfile.frontend .
-	docker run --name frontend-container -p 8501:8501 --rm frontend-image
+	docker build -t happymeter-frontend -f Dockerfile.frontend .
+	docker run --name frontend-container -p 8501:8501 --rm happymeter-frontend
 
 docker-compose:
 	@echo "Running docker compose"

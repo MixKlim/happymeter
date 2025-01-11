@@ -161,3 +161,6 @@ cython_debug/
 
 # Local database
 src/database/predictions.db
+
+# Local ML model
+src/model/happy_model.pkl

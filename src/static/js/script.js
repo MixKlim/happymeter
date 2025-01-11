@@ -17,7 +17,7 @@ window.onload = () => {
         }
 
         try {
-            const response = await fetch("http://localhost:8080/predict", {
+            const response = await fetch(`${hostUrl}/predict`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json; charset=UTF-8",

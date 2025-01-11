@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="{{ url_for('static', path='/css/style.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', path='/favicon.ico') }}" rel="icon" type="image/x-icon"/>
+    <link href="static/css/style.css" rel="stylesheet">
+    <link href="static/favicon.ico" rel="icon" type="image/x-icon"/>
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
     <title>happymeter</title>
   </head>
@@ -109,6 +109,11 @@
       </form>
     </div>
 
+    <script>
+      const hostUrl = window.location.origin;
+      console.log("API URL: ", hostUrl + "/predict");
+    </script>
+
     <br />
     <div class="text-center">
       <button type="button" class="button" id="button" onclick="location.href='predict';">
@@ -116,7 +121,7 @@
       </button>
     </div>
 
-    <script src="{{ url_for('static', path='/js/script.js') }}"></script>
+    <script src="static/js/script.js"></script>
     <br />
     <div id="results"></div>
   </body>

@@ -13,13 +13,6 @@ client = TestClient(app=app)
 
 
 @pytest.fixture
-def mock_env() -> Generator[None, None, None]:
-    """Fixture to mock environment variables for tests."""
-    with patch.dict(os.environ, {}, clear=True):
-        yield
-
-
-@pytest.fixture
 def mock_model() -> Generator[AsyncMock, None, None]:
     """Fixture to mock the model object.
 
@@ -63,52 +56,45 @@ def mock_read_from_db() -> Generator[AsyncMock, None, None]:
 
 # Test cases
 @pytest.mark.parametrize(
-    "type_deployment, expected_url",
+    "env_vars, expected_url",
     [
         (
-            "LOCAL",
+            {
+                "POSTGRES_HOST": "localhost",
+                "POSTGRES_USER": "user",
+                "POSTGRES_PASSWORD": "password",
+                "POSTGRES_DB": "test_db",
+            },
+            "postgresql://user:password@localhost/test_db",
+        ),
+        (
+            {},
             f"sqlite:///{Path(__file__).resolve().parent.parent.absolute() / 'database' / 'predictions.db'}",
-        ),
-        (
-            "",
-            f"sqlite:///{Path(__file__).resolve().parent.parent.absolute() / 'database' / 'predictions.db'}",
-        ),
-        (
-            "DOCKER",
-            "postgresql://test_user:test_password@postgres/test.db",
-        ),
-        (
-            "AZURE",
-            "sqlite:////mnt/database/predictions.db",
         ),
     ],
 )
-def test_get_database_url(
-    mock_env: None, type_deployment: str, expected_url: str
-) -> None:
+def test_get_database_url(env_vars: Dict[str, str], expected_url: str) -> None:
     """
-    Parametrized test for getting the correct database URL based on the REMOTE environment variable.
+    Test the `get_database_url` function for both PostgreSQL and SQLite scenarios.
 
     Args:
-        mock_env (None): Mocked environment.
-        remote_env (str): Value to set for the REMOTE environment variable.
-        expected_url (str): The expected URL to be returned by get_database_url.
+        env_vars (Dict[str, str]): Mocked environment variables to set for the test.
+        expected_url (str): The expected database URL.
     """
-    # Mock environment variables based on the parameterized test case
+    # Backup the current environment variables
+    original_env = dict(os.environ)
 
-    if type_deployment == "DOCKER":
-        os.environ["REMOTE"] = "true"
-        os.environ["POSTGRES_USER"] = "test_user"
-        os.environ["POSTGRES_PASSWORD"] = "test_password"
-        os.environ["POSTGRES_DB"] = "test.db"
-    else:
-        os.environ["REMOTE"] = ""
+    # Clear environment variables and set new ones for the test
+    os.environ.clear()
+    os.environ.update(env_vars)
 
-    # Call the function
-    result = get_database_url(type_deployment)
-
-    # Assert that the returned URL matches the expected URL
-    assert result == expected_url, f"Expected {expected_url}, but got {result}"
+    try:
+        # Call the function and assert the result
+        assert get_database_url() == expected_url
+    finally:
+        # Restore the original environment variables
+        os.environ.clear()
+        os.environ.update(original_env)
 
 
 def test_root() -> None:

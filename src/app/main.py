@@ -17,9 +17,6 @@ from src.app.database import HappyPrediction, init_db, read_from_db, save_to_db
 from src.app.logger import logger
 from src.app.model import HappyModel, SurveyMeasurement
 
-# Read environmental variables
-type_deployment = os.getenv("DEPLOY", "LOCAL")
-
 # Create app and model objects
 app = FastAPI(
     title="Happiness Prediction",
@@ -52,20 +49,15 @@ app.add_middleware(
 )
 
 
-def get_database_url(type_deployment: str) -> str:
+def get_database_url() -> str:
     """
     Check what type of database to use. Either local (SQLite) or remote (PostgreSQL).
 
-    Args:
-        type_deployment (str): type deployment
-
     Returns:
-        str: database url.
+        str: The database URL to be used by the application.
     """
-    if type_deployment == "DOCKER":
-        return f'postgresql://{os.getenv("POSTGRES_USER")}:{os.getenv("POSTGRES_PASSWORD")}@postgres/{os.getenv("POSTGRES_DB")}'
-    elif type_deployment == "AZURE":
-        return "sqlite:////mnt/database/predictions.db"
+    if "POSTGRES_HOST" in os.environ and os.environ["POSTGRES_HOST"]:
+        return f'postgresql://{os.environ["POSTGRES_USER"]}:{os.environ["POSTGRES_PASSWORD"]}@{os.environ["POSTGRES_HOST"]}/{os.environ["POSTGRES_DB"]}'
     else:
         DB_PATH = (
             Path(__file__).resolve().parent.parent.absolute()
@@ -75,7 +67,7 @@ def get_database_url(type_deployment: str) -> str:
         return f"sqlite:///{DB_PATH}"
 
 
-DATABASE_URL = get_database_url(type_deployment)
+DATABASE_URL = get_database_url()
 DB_INITIALIZED = init_db(DATABASE_URL)
 
 
@@ -84,7 +76,16 @@ DB_INITIALIZED = init_db(DATABASE_URL)
 async def standard_validation_exception_handler(
     request: Request, exc: RequestValidationError
 ) -> JSONResponse:
-    # Log the validation error details
+    """
+    Handles validation errors for incoming requests.
+
+    Args:
+        request (Request): The request object that caused the validation error.
+        exc (RequestValidationError): The validation error details.
+
+    Returns:
+        JSONResponse: A JSON response with details of the validation error.
+    """
     logger.error(f"422 Validation Error: {exc.errors()} | Request Body: {exc.body}")
 
     return JSONResponse(
@@ -100,6 +101,12 @@ logger.info("API is starting up...")
 async def root(request: Request) -> None:
     """
     Main page for ratings.
+
+    Args:
+        request (Request): The incoming request object.
+
+    Returns:
+        TemplateResponse: Renders the main index page.
     """
     return templates.TemplateResponse(
         request=request,
@@ -112,6 +119,12 @@ async def predict_happiness(measurement: SurveyMeasurement) -> dict:
     """
     Expose the prediction functionality, make a prediction from the passed
     JSON data and return the prediction with the confidence.
+
+    Args:
+        measurement (SurveyMeasurement): The survey data used to make the prediction.
+
+    Returns:
+        dict: A dictionary containing the prediction and its probability.
     """
     try:
         data = measurement.dict()
@@ -141,10 +154,12 @@ async def read_measurements(request: Request) -> HTMLResponse:
     """
     Read all saved measurements from the database and display them in an HTML page.
 
+    Args:
+        request (Request): The incoming request object.
+
     Returns:
         HTMLResponse: A response containing the HTML representation of all saved measurements.
     """
-    # Read data from the database using SQLAlchemy and the HappyPrediction model
     rows: List[HappyPrediction] = read_from_db(DATABASE_URL)
 
     # Load the HTML template

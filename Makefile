@@ -3,6 +3,7 @@ SHELL=CMD
 help:
 	@echo "  backend           - Run the backend using uvicorn"
 	@echo "  frontend          - Run the frontend using Streamlit"
+	@echo "  cache             - Clear poetry's cache"
 	@echo "  eval              - Run pre-commit checks on all files"
 	@echo "  test              - Run unit tests with pytest"
 	@echo "  cov               - Generate coverage report and badge"
@@ -18,6 +19,10 @@ backend:
 frontend:
 	@echo "Running frontend"
 	poetry run streamlit run src/streamlit/ui.py --server.address 127.0.0.1 --server.port 8501
+
+cache:
+	@echo "Clear poetry's cache"
+	poetry cache clear PyPI --all --no-interaction
 
 eval:
 	@echo "Running pre-commit"

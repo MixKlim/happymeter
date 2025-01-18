@@ -1,0 +1,53 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: database-container
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - 5432:5432
+    networks:
+      - deploy_network
+
+  backend:
+    image: happyregistry.azurecr.io/happymeter-backend:${TAG}
+    container_name: backend-container
+    environment:
+      POSTGRES_HOST: ${POSTGRES_HOST}.happymeter.svc.cluster.local
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgres
+    networks:
+      - deploy_network
+
+  frontend:
+    image: happyregistry.azurecr.io/happymeter-frontend:${TAG}
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: frontend-container
+    ports:
+      - 8501:8501
+    environment:
+      BACKEND_HOST: backend:8080
+    depends_on:
+      - backend
+    networks:
+      - deploy_network
+
+networks:
+  deploy_network:
+    driver: bridge
+
+volumes:
+  postgres_data:

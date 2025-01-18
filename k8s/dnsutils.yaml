@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dnsutils
+  namespace: happymeter
+spec:
+  containers:
+  - name: dnsutils
+    image: busybox
+    command:
+      - sleep
+      - "3600"

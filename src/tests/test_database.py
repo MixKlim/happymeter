@@ -159,12 +159,12 @@ def test_save_to_db_success(
     # Assert that the data is saved correctly
     result = mock_session.query(HappyPrediction).filter_by(prediction=1).first()
     assert result is not None, "Record was not saved correctly"
-    assert (
-        result.city_services == 8
-    ), f"Expected city_services to be 8, but got {result.city_services}"
-    assert (
-        result.probability == 0.85
-    ), f"Expected probability to be 0.85, but got {result.probability}"
+    assert result.city_services == 8, (
+        f"Expected city_services to be 8, but got {result.city_services}"
+    )
+    assert result.probability == 0.85, (
+        f"Expected probability to be 0.85, but got {result.probability}"
+    )
 
     # Verify logger info message
     mock_logger.info.assert_called_once_with("Data saved to the database successfully!")
@@ -249,12 +249,12 @@ def test_read_from_db_success(
 
     # Verify that at least one record is returned
     assert len(records) > 0, "No records were retrieved from the database"
-    assert isinstance(
-        records[0], HappyPrediction
-    ), "Returned record is not an instance of HappyPrediction"
-    assert (
-        records[0].prediction == 1
-    ), f"Expected prediction to be 1, but got {records[0].prediction}"
+    assert isinstance(records[0], HappyPrediction), (
+        "Returned record is not an instance of HappyPrediction"
+    )
+    assert records[0].prediction == 1, (
+        f"Expected prediction to be 1, but got {records[0].prediction}"
+    )
 
     ## Verify the logger was called with success message
     mock_logger.info.assert_any_call("Data read from the database successfully!")

@@ -104,9 +104,9 @@ def test_root() -> None:
         - The response status code is 200.
     """
     response = client.get("/")
-    assert (
-        response.status_code == 200
-    ), "Expected status code 200 for a successful response"
+    assert response.status_code == 200, (
+        "Expected status code 200 for a successful response"
+    )
 
 
 def test_predict_happiness_success(mock_model: AsyncMock) -> None:
@@ -135,9 +135,9 @@ def test_predict_happiness_success(mock_model: AsyncMock) -> None:
     response = client.post("/predict", json=test_data)
 
     # Assert
-    assert (
-        response.status_code == 200
-    ), "Expected status code 200 for a successful response"
+    assert response.status_code == 200, (
+        "Expected status code 200 for a successful response"
+    )
     assert response.json() == {"prediction": 1, "probability": 0.85}
     mock_model.predict_happiness.assert_awaited_once_with(
         test_data["city_services"],
@@ -167,9 +167,9 @@ def test_predict_happiness_unexpected_error(mock_model: AsyncMock) -> None:
     response = client.post("/predict", json=test_data)
 
     # Assert
-    assert (
-        response.status_code == 500
-    ), "Expected status code 500 for a failure response"
+    assert response.status_code == 500, (
+        "Expected status code 500 for a failure response"
+    )
     assert response.json() == {"detail": "ERR_UNEXPECTED"}
 
 
@@ -207,16 +207,16 @@ def test_read_measurements(
     response = client.get("/data")
 
     # Assert
-    assert (
-        response.status_code == 200
-    ), "Expected status code 200 for a successful response"
+    assert response.status_code == 200, (
+        "Expected status code 200 for a successful response"
+    )
 
     html_content = response.text
 
     # Verify HTML content
-    assert (
-        "<h1>Saved Measurements</h1>" in html_content
-    ), "HTML content should include the header"
+    assert "<h1>Saved Measurements</h1>" in html_content, (
+        "HTML content should include the header"
+    )
     assert "<td>1</td>" in html_content, "HTML content should include ID"
     assert "<td>5</td>" in html_content, "HTML content should include data"
     assert "<td>0.92</td>" in html_content, "HTML content should include probability"

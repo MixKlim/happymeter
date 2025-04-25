@@ -57,7 +57,7 @@ def get_database_url() -> str:
         str: The database URL to be used by the application.
     """
     if "POSTGRES_HOST" in os.environ and os.environ["POSTGRES_HOST"]:
-        return f'postgresql://{os.environ["POSTGRES_USER"]}:{os.environ["POSTGRES_PASSWORD"]}@{os.environ["POSTGRES_HOST"]}/{os.environ["POSTGRES_DB"]}'
+        return f"postgresql://{os.environ['POSTGRES_USER']}:{os.environ['POSTGRES_PASSWORD']}@{os.environ['POSTGRES_HOST']}/{os.environ['POSTGRES_DB']}"
     else:
         DB_PATH = (
             Path(__file__).resolve().parent.parent.absolute()

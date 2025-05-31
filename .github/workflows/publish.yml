@@ -5,8 +5,8 @@ on:
     types: [published]
 
 env:
-  PYTHON_VERSION: "3.11"
-  POETRY_VERSION: "2.1.3"
+  PYTHON_VERSION: "3.12"
+  UV_VERSION: "0.7.9"
 
 permissions:
   contents: read
@@ -24,25 +24,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install uv ${{ env.UV_VERSION }}
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: ${{ env.UV_VERSION }}
+          enable-cache: true
+
       - name: Set up Python ${{ env.PYTHON_VERSION }}
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
-
-      - name: Install Poetry
-        run: curl -sSL https://install.python-poetry.org | python - --version ${{ env.POETRY_VERSION }} -y
-
-      - name: Update PATH
-        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-      - name: Update Poetry configuration
-        run: poetry config virtualenvs.create false
+          python-version-file: "pyproject.toml"
 
       - name: Install dependencies
-        run: poetry install --sync --no-interaction
+        run: uv sync --locked --all-groups --all-extras
 
       - name: Package project
-        run: poetry build
+        run: uv build
 
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1

@@ -3,7 +3,7 @@ SHELL=CMD
 help:
 	@echo "  backend           - Run the backend using uvicorn"
 	@echo "  frontend          - Run the frontend using Streamlit"
-	@echo "  cache             - Clear poetry's cache"
+	@echo "  cache             - Clear uv's cache"
 	@echo "  eval              - Run pre-commit checks on all files"
 	@echo "  test              - Run unit tests with pytest"
 	@echo "  cov               - Generate coverage report and badge"
@@ -14,23 +14,23 @@ help:
 
 backend:
 	@echo "Running backend"
-	poetry run uvicorn src.app.main:app --port=8080 --reload
+	uv run uvicorn src.app.main:app --port=8080 --reload
 
 frontend:
 	@echo "Running frontend"
-	poetry run streamlit run src/streamlit/ui.py --server.address 127.0.0.1 --server.port 8501
+	uv run streamlit run src/streamlit/ui.py --server.address 127.0.0.1 --server.port 8501
 
 cache:
-	@echo "Clear poetry's cache"
-	poetry cache clear PyPI --all --no-interaction
+	@echo "Clear uv's cache"
+	uv cache clear PyPI --all --no-interaction
 
 eval:
 	@echo "Running pre-commit"
-	poetry run pre-commit run --all-files
+	uv run pre-commit run --all-files
 
 test:
 	@echo "Running unit test"
-	poetry run pytest --doctest-modules --cov=. --cov-report=html
+	uv run pytest --doctest-modules --cov=. --cov-report=html
 
 cov:
 	@echo "Creating coverage badge"

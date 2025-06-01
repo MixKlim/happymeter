@@ -19,8 +19,8 @@ ML model based on [Somerville Happiness Survey Data Set](https://archive.ics.uci
 ![](media/database.png)
 
 ### Run locally (from root folder):
-- Create virtual environment: `python -m venv .venv`
-- Install dependencies: `poetry install --no-root`
+- Create virtual environment: `uv venv --python 3.12`
+- Install dependencies: `uv sync --all-groups`
 - Launch backend: `make backend`
 - Launch front-end:
   - Native: [127.0.0.1:8080](http://127.0.0.1:8080/)

@@ -1,22 +1,22 @@
 # happymeter 😊
 
 [![Build](https://github.com/mixklim/happymeter/actions/workflows/build.yml/badge.svg)](https://github.com/mixklim/happymeter/actions/workflows/build.yml)
-[![Coverage Status](./reports/coverage/coverage-badge.svg?dummy=8484744)](./reports/coverage/index.html)
+[![Coverage Status](https://raw.githubusercontent.com/mixklim/happymeter/main/reports/coverage/coverage-badge.svg?dummy=8484744)](https://raw.githubusercontent.com/mixklim/happymeter/main/reports/coverage/index.html)
 
 ### Find out how happy you are
 ML model based on [Somerville Happiness Survey Data Set](https://archive.ics.uci.edu/ml/datasets/Somerville+Happiness+Survey#).
 
 ### FastAPI backend
-![](media/backend.png)
+![](https://raw.githubusercontent.com/mixklim/happymeter/main/media/backend.png)
 
 ### Native front-end (HTML + CSS + JS)
-![](media/frontend_1.png)
+![](https://raw.githubusercontent.com/mixklim/happymeter/main/media/frontend_1.png)
 
 ### Streamlit front-end
-![](media/frontend_2.png)
+![](https://raw.githubusercontent.com/mixklim/happymeter/main/media/frontend_2.png)
 
 ### SQLite / PostgreSQL Database
-![](media/database.png)
+![](https://raw.githubusercontent.com/mixklim/happymeter/main/media/database.png)
 
 ### Run locally (from root folder):
 - Create virtual environment: `uv venv --python 3.12`
@@ -37,6 +37,6 @@ ML model based on [Somerville Happiness Survey Data Set](https://archive.ics.uci
 - Docker frontend: `make docker-frontend`
 - Docker compose: `make docker-compose`
 
-### Deploy to Azure:
+### Deploy to Azure (Container Apps):
 
 - Run `bash deploy_azure.sh`

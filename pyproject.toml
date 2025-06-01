@@ -1,14 +1,14 @@
 [project]
+name = "happymeter"
+version = "4.0.0"
+description = "Find out how happy you are"
 authors = [
     {name = "Klim Mikhailov", email = "mixklim@gmail.com"},
 ]
 license = {text = "MIT"}
-requires-python = "==3.12.*"
-name = "happymeter"
-version = "4.0.0"
-description = "Find out how happy you are"
 readme = "README.md"
-package-mode = true
+requires-python = "==3.12.*"
+dependencies = []
 
 [dependency-groups]
 dev = [

@@ -402,7 +402,7 @@ wheels = [
 
 [[package]]
 name = "happymeter"
-version = "4.0.0"
+version = "4.0.1"
 source = { virtual = "." }
 
 [package.dev-dependencies]

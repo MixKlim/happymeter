@@ -42,14 +42,13 @@ jobs:
             sleep 2
           done
 
-      # - name: Run backend unit tests
-      #   run: |
-      #     docker-compose exec -T backend-container uv run pytest
+      - name: Backend healthcheck
+        run: docker-compose logs backend | grep -q "Uvicorn running" || exit 1
 
       - name: Frontend healthcheck
         run: |
           curl --fail http://localhost:8501/_stcore/health
 
-      - name: Tear down
+      - name: Tear down Docker Compose
         if: always()
         run: docker-compose down -v

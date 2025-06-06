@@ -4,21 +4,27 @@
 [![Coverage Status](https://raw.githubusercontent.com/mixklim/happymeter/main/reports/coverage/coverage-badge.svg?dummy=8484744)](https://raw.githubusercontent.com/mixklim/happymeter/main/reports/coverage/index.html)
 
 ### Find out how happy you are
+
 ML model based on [Somerville Happiness Survey Data Set](https://archive.ics.uci.edu/ml/datasets/Somerville+Happiness+Survey#).
 
 ### FastAPI backend
+
 ![](https://raw.githubusercontent.com/mixklim/happymeter/main/media/backend.png)
 
 ### Native front-end (HTML + CSS + JS)
+
 ![](https://raw.githubusercontent.com/mixklim/happymeter/main/media/frontend_1.png)
 
 ### Streamlit front-end
+
 ![](https://raw.githubusercontent.com/mixklim/happymeter/main/media/frontend_2.png)
 
 ### SQLite / PostgreSQL Database
+
 ![](https://raw.githubusercontent.com/mixklim/happymeter/main/media/database.png)
 
 ### Run locally (from root folder):
+
 - Create virtual environment: `uv venv --python 3.12`
 - Install dependencies: `uv sync --all-groups`
 - Launch backend: `make backend`

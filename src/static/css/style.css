@@ -6,7 +6,10 @@ body {
   color: purple !important;
 }
 
-h1, h2, p, div {
+h1,
+h2,
+p,
+div {
   text-align: center;
 }
 
@@ -24,12 +27,12 @@ h2 {
 }
 
 div.stars {
-  text-align:center;
-  direction:rtl;
+  text-align: center;
+  direction: rtl;
 }
 
 div.stars form {
-  display:inline-block;
+  display: inline-block;
 }
 
 form {
@@ -41,17 +44,17 @@ input.star {
 }
 
 input.star:checked ~ label.star:before {
-  content: '\f005';
-  color: #FD4;
-  transition: all .25s;
+  content: "\f005";
+  color: #fd4;
+  transition: all 0.25s;
 }
 
 label.star {
-  display:inline-block;
+  display: inline-block;
   padding: 8px;
   font-size: 30px;
   color: #444;
-  transition: all .2s;
+  transition: all 0.2s;
 }
 
 label.star:hover {
@@ -59,7 +62,7 @@ label.star:hover {
 }
 
 label.star:before {
-  content: '\f006';
+  content: "\f006";
   font-family: FontAwesome;
 }
 
@@ -68,7 +71,7 @@ p {
 }
 
 .button {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   border: none;
   color: white;
   margin-top: 15px;
@@ -85,9 +88,8 @@ p {
   opacity: 1;
 }
 
-
 .class-of-divs {
-  min-width: 100%
+  min-width: 100%;
 }
 
 .close-popup {

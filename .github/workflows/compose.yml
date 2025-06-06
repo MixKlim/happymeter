@@ -1,0 +1,54 @@
+name: CI Docker Compose
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      POSTGRES_HOST: postgres
+      POSTGRES_DB: testdb
+      POSTGRES_USER: testuser
+      POSTGRES_PASSWORD: testpass
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
+      - name: Build and start services
+        run: docker-compose up -d --build
+
+      - name: Wait for backend to be ready
+        run: |
+          echo "Waiting for backend..."
+          for i in {1..30}; do
+            curl -s http://localhost:8080/docs && break
+            echo "Waiting ($i)..."
+            sleep 2
+          done
+
+      - name: Wait for frontend to be ready
+        run: |
+          echo "Waiting for frontend..."
+          for i in {1..30}; do
+            curl -s http://localhost:8501/_stcore/health && break
+            echo "Waiting ($i)..."
+            sleep 2
+          done
+
+      - name: Backend healthcheck
+        run: docker-compose logs backend | grep -q "Uvicorn running" || exit 1
+
+      - name: Frontend healthcheck
+        run: |
+          curl --fail http://localhost:8501/_stcore/health
+
+      - name: Tear down Docker Compose
+        if: always()
+        run: docker-compose down -v

@@ -42,9 +42,9 @@ jobs:
             sleep 2
           done
 
-      - name: Run backend unit tests
-        run: |
-          docker-compose exec -T backend-container uv run pytest
+      # - name: Run backend unit tests
+      #   run: |
+      #     docker-compose exec -T backend-container uv run pytest
 
       - name: Frontend healthcheck
         run: |

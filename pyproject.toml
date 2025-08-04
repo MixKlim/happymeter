@@ -103,7 +103,7 @@ backend = [
     "urllib3>=2.2.3,<3.0.0",
     "uvicorn==0.25.0",
     "validators==0.22.0",
-    "virtualenv==20.26.6",
+    "virtualenv==20.33.0",
     "watchdog==3.0.0",
     "zipp>=3.20.2,<4.0.0",
     "sqlalchemy>=2.0.36,<3.0.0",

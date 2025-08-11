@@ -562,7 +562,7 @@ backend = [
     { name = "pyproject-hooks", specifier = "==1.0.0" },
     { name = "pytz", specifier = "==2023.3.post1" },
     { name = "pyyaml", specifier = "==6.0.1" },
-    { name = "referencing", specifier = "==0.32.0" },
+    { name = "referencing", specifier = "==0.36.2" },
     { name = "requests", specifier = ">=2.32.3,<3.0.0" },
     { name = "rich", specifier = "==13.7.0" },
     { name = "rpds-py", specifier = "==0.16.2" },
@@ -1407,15 +1407,16 @@ wheels = [
 
 [[package]]
 name = "referencing"
-version = "0.32.0"
+version = "0.36.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "attrs" },
     { name = "rpds-py" },
+    { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/96/71/0aabc36753b7f4ad18cbc3c97dea9d6a4f204cbba7b8e9804313366e1c8f/referencing-0.32.0.tar.gz", hash = "sha256:689e64fe121843dcfd57b71933318ef1f91188ffb45367332700a86ac8fd6161", size = 54826, upload-time = "2023-12-07T15:05:54.328Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/2f/db/98b5c277be99dd18bfd91dd04e1b759cad18d1a338188c936e92f921c7e2/referencing-0.36.2.tar.gz", hash = "sha256:df2e89862cd09deabbdba16944cc3f10feb6b3e6f18e902f7cc25609a34775aa", size = 74744, upload-time = "2025-01-25T08:48:16.138Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b4/11/d121780c173336c9bc3a5b8240ed31f518957cc22f6311c76259cb0fcf32/referencing-0.32.0-py3-none-any.whl", hash = "sha256:bdcd3efb936f82ff86f993093f6da7435c7de69a3b3a5a06678a6050184bee99", size = 26471, upload-time = "2023-12-07T15:05:52.224Z" },
+    { url = "https://files.pythonhosted.org/packages/c1/b1/3baf80dc6d2b7bc27a95a67752d0208e410351e3feb4eb78de5f77454d8d/referencing-0.36.2-py3-none-any.whl", hash = "sha256:e8699adbbf8b5c7de96d8ffa0eb5c158b3beafce084968e2ea8bb08c6794dcd0", size = 26775, upload-time = "2025-01-25T08:48:14.241Z" },
 ]
 
 [[package]]

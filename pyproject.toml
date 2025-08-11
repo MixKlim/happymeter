@@ -41,7 +41,7 @@ backend = [
     "certifi>=2024.8.30,<2025.0.0",
     "cfgv==3.4.0",
     "charset-normalizer==3.3.2",
-    "click==8.1.7",
+    "click==8.2.1",
     "coverage==7.4.0",
     "distlib==0.3.8",
     "exceptiongroup==1.2.0",

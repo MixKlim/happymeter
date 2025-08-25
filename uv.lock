@@ -574,7 +574,7 @@ backend = [
     { name = "sqlalchemy", specifier = ">=2.0.36,<3.0.0" },
     { name = "starlette", specifier = ">=0.40.0" },
     { name = "tenacity", specifier = "==8.2.3" },
-    { name = "threadpoolctl", specifier = "==3.2.0" },
+    { name = "threadpoolctl", specifier = "==3.6.0" },
     { name = "toml", specifier = "==0.10.2" },
     { name = "tomli", specifier = "==2.0.1" },
     { name = "toolz", specifier = "==0.12.0" },
@@ -1655,11 +1655,11 @@ wheels = [
 
 [[package]]
 name = "threadpoolctl"
-version = "3.2.0"
+version = "3.6.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/47/8a/c05f7831beb32aff70f808766224f11c650f7edfd49b27a8fc6666107006/threadpoolctl-3.2.0.tar.gz", hash = "sha256:c96a0ba3bdddeaca37dc4cc7344aafad41cdb8c313f74fdfe387a867bba93355", size = 36266, upload-time = "2023-07-13T14:53:53.299Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/b7/4d/08c89e34946fce2aec4fbb45c9016efd5f4d7f24af8e5d93296e935631d8/threadpoolctl-3.6.0.tar.gz", hash = "sha256:8ab8b4aa3491d812b623328249fab5302a68d2d71745c8a4c719a2fcaba9f44e", size = 21274, upload-time = "2025-03-13T13:49:23.031Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/81/12/fd4dea011af9d69e1cad05c75f3f7202cdcbeac9b712eea58ca779a72865/threadpoolctl-3.2.0-py3-none-any.whl", hash = "sha256:2b7818516e423bdaebb97c723f86a7c6b0a83d3f3b0970328d66f4d9104dc032", size = 15539, upload-time = "2023-07-13T14:53:39.336Z" },
+    { url = "https://files.pythonhosted.org/packages/32/d5/f9a850d79b0851d1d4ef6456097579a9005b31fea68726a4ae5f2d82ddd9/threadpoolctl-3.6.0-py3-none-any.whl", hash = "sha256:43a0b8fd5a2928500110039e43a5eed8480b918967083ea48dc3ab9f13c4a7fb", size = 18638, upload-time = "2025-03-13T13:49:21.846Z" },
 ]
 
 [[package]]

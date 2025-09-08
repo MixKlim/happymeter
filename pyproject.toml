@@ -66,7 +66,7 @@ backend = [
     "mdurl==0.1.2",
     "nodeenv==1.8.0",
     "numpy==1.26.2",
-    "packaging==23.2",
+    "packaging==25.0",
     "pandas==2.3.1",
     "pathspec==0.12.1",
     "pillow>=10.4.0,<11.0.0",

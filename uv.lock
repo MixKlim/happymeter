@@ -545,7 +545,7 @@ backend = [
     { name = "mdurl", specifier = "==0.1.2" },
     { name = "nodeenv", specifier = "==1.8.0" },
     { name = "numpy", specifier = "==1.26.2" },
-    { name = "packaging", specifier = "==23.2" },
+    { name = "packaging", specifier = "==25.0" },
     { name = "pandas", specifier = "==2.3.1" },
     { name = "pathspec", specifier = "==0.12.1" },
     { name = "pillow", specifier = ">=10.4.0,<11.0.0" },
@@ -951,11 +951,11 @@ wheels = [
 
 [[package]]
 name = "packaging"
-version = "23.2"
+version = "25.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/fb/2b/9b9c33ffed44ee921d0967086d653047286054117d584f1b1a7c22ceaf7b/packaging-23.2.tar.gz", hash = "sha256:048fb0e9405036518eaaf48a55953c750c11e1a1b68e0dd1a9d62ed0c092cfc5", size = 146714, upload-time = "2023-10-01T13:50:05.279Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a1/d4/1fc4078c65507b51b96ca8f8c3ba19e6a61c8253c72794544580a7b6c24d/packaging-25.0.tar.gz", hash = "sha256:d443872c98d677bf60f6a1f2f8c1cb748e8fe762d2bf9d3148b5599295b0fc4f", size = 165727, upload-time = "2025-04-19T11:48:59.673Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ec/1a/610693ac4ee14fcdf2d9bf3c493370e4f2ef7ae2e19217d7a237ff42367d/packaging-23.2-py3-none-any.whl", hash = "sha256:8c491190033a9af7e1d931d0b5dacc2ef47509b34dd0de67ed209b5203fc88c7", size = 53011, upload-time = "2023-10-01T13:50:03.745Z" },
+    { url = "https://files.pythonhosted.org/packages/20/12/38679034af332785aac8774540895e234f4d07f7545804097de4b666afd8/packaging-25.0-py3-none-any.whl", hash = "sha256:29572ef2b1f17581046b3a2227d5c611fb25ec70ca1ba8554b24b0e69331a484", size = 66469, upload-time = "2025-04-19T11:48:57.875Z" },
 ]
 
 [[package]]
@@ -1618,7 +1618,7 @@ wheels = [
 
 [[package]]
 name = "streamlit"
-version = "1.45.1"
+version = "1.49.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "altair" },
@@ -1640,9 +1640,9 @@ dependencies = [
     { name = "typing-extensions" },
     { name = "watchdog", marker = "sys_platform != 'darwin'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f0/46/9b3f73886f82d27849ce1e7a74ae7c39f5323e46da0b6e8847ad4c25f44c/streamlit-1.45.1.tar.gz", hash = "sha256:e37d56c0af5240dbc240976880e81366689c290a559376417246f9b3f51b4217", size = 9463953, upload-time = "2025-05-12T20:40:30.562Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/24/17/c8024e4ef311dc7833987c603a7d0ebe82f8aa352aaca53b27be3f6b7f01/streamlit-1.49.1.tar.gz", hash = "sha256:6f213f1e43f035143a56f58ad50068d8a09482f0a2dad1050d7e7e99a9689818", size = 9640116, upload-time = "2025-08-29T18:35:45.055Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/13/e6/69fcbae3dd2fcb2f54283a7cbe03c8b944b79997f1b526984f91d4796a02/streamlit-1.45.1-py3-none-any.whl", hash = "sha256:9ab6951585e9444672dd650850f81767b01bba5d87c8dac9bc2e1c859d6cc254", size = 9856294, upload-time = "2025-05-12T20:40:27.875Z" },
+    { url = "https://files.pythonhosted.org/packages/85/9e/146cdef515ad07e56c3aa942d087562498592d441aa3bae845ef0cd8fca3/streamlit-1.49.1-py3-none-any.whl", hash = "sha256:ad7b6d0dc35db168587acf96f80378249467fc057ed739a41c511f6bf5aa173b", size = 10044388, upload-time = "2025-08-29T18:35:42.239Z" },
 ]
 
 [[package]]

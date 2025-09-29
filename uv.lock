@@ -531,7 +531,7 @@ backend = [
     { name = "h11", specifier = ">=0.16.0,<1.0.0" },
     { name = "httpcore", specifier = ">=1.0.9,<2.0.0" },
     { name = "httpx", specifier = "==0.28.1" },
-    { name = "identify", specifier = "==2.5.33" },
+    { name = "identify", specifier = "==2.6.14" },
     { name = "idna", specifier = ">=3.10,<4.0" },
     { name = "importlib-metadata", specifier = "==6.11.0" },
     { name = "iniconfig", specifier = "==2.1.0" },
@@ -638,11 +638,11 @@ wheels = [
 
 [[package]]
 name = "identify"
-version = "2.5.33"
+version = "2.6.14"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/61/a0/92aba7e128faadab9db785c1f8cc442caf51cba5a55b575abb211b12526f/identify-2.5.33.tar.gz", hash = "sha256:161558f9fe4559e1557e1bff323e8631f6a0e4837f7497767c1782832f16b62d", size = 99009, upload-time = "2023-12-07T04:26:51.415Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/52/c4/62963f25a678f6a050fb0505a65e9e726996171e6dbe1547f79619eefb15/identify-2.6.14.tar.gz", hash = "sha256:663494103b4f717cb26921c52f8751363dc89db64364cd836a9bf1535f53cd6a", size = 99283, upload-time = "2025-09-06T19:30:52.938Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a8/a3/9578c3b5dd725f65d277923dc5cc8fd881d87f68067f8267670b346a5593/identify-2.5.33-py2.py3-none-any.whl", hash = "sha256:d40ce5fcd762817627670da8a7d8d8e65f24342d14539c59488dc603bf662e34", size = 98926, upload-time = "2023-12-07T04:26:49.11Z" },
+    { url = "https://files.pythonhosted.org/packages/e5/ae/2ad30f4652712c82f1c23423d79136fbce338932ad166d70c1efb86a5998/identify-2.6.14-py2.py3-none-any.whl", hash = "sha256:11a073da82212c6646b1f39bb20d4483bfb9543bd5566fec60053c4bb309bf2e", size = 99172, upload-time = "2025-09-06T19:30:51.759Z" },
 ]
 
 [[package]]

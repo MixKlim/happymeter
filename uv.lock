@@ -580,7 +580,7 @@ backend = [
     { name = "threadpoolctl", specifier = "==3.6.0" },
     { name = "toml", specifier = "==0.10.2" },
     { name = "tomli", specifier = "==2.2.1" },
-    { name = "toolz", specifier = "==0.12.0" },
+    { name = "toolz", specifier = "==1.0.0" },
     { name = "tornado", specifier = "==6.5.2" },
     { name = "typing-extensions", specifier = "==4.15.0" },
     { name = "tzdata", specifier = "==2025.2" },
@@ -1699,11 +1699,11 @@ wheels = [
 
 [[package]]
 name = "toolz"
-version = "0.12.0"
+version = "1.0.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/cf/05/2008534bbaa716b46a2d795d7b54b999d0f7638fbb9ed0b6e87bfa934f84/toolz-0.12.0.tar.gz", hash = "sha256:88c570861c440ee3f2f6037c4654613228ff40c93a6c25e0eba70d17282c6194", size = 66264, upload-time = "2022-07-10T04:29:56.016Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/8a/0b/d80dfa675bf592f636d1ea0b835eab4ec8df6e9415d8cfd766df54456123/toolz-1.0.0.tar.gz", hash = "sha256:2c86e3d9a04798ac556793bced838816296a2f085017664e4995cb40a1047a02", size = 66790, upload-time = "2024-10-04T16:17:04.001Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/7f/5c/922a3508f5bda2892be3df86c74f9cf1e01217c2b1f8a0ac4841d903e3e9/toolz-0.12.0-py3-none-any.whl", hash = "sha256:2059bd4148deb1884bb0eb770a3cde70e7f954cfbbdc2285f1f2de01fd21eb6f", size = 55835, upload-time = "2022-07-10T04:29:54.096Z" },
+    { url = "https://files.pythonhosted.org/packages/03/98/eb27cc78ad3af8e302c9d8ff4977f5026676e130d28dd7578132a457170c/toolz-1.0.0-py3-none-any.whl", hash = "sha256:292c8f1c4e7516bf9086f8850935c799a874039c8bcf959d47b600e4c44a6236", size = 56383, upload-time = "2024-10-04T16:17:01.533Z" },
 ]
 
 [[package]]

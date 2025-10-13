@@ -586,7 +586,7 @@ backend = [
     { name = "tzdata", specifier = "==2025.2" },
     { name = "urllib3", specifier = ">=2.2.3,<3.0.0" },
     { name = "uvicorn", specifier = "==0.35.0" },
-    { name = "validators", specifier = "==0.22.0" },
+    { name = "validators", specifier = "==0.35.0" },
     { name = "virtualenv", specifier = "==20.33.0" },
     { name = "watchdog", specifier = "==3.0.0" },
     { name = "zipp", specifier = ">=3.20.2,<4.0.0" },
@@ -1778,11 +1778,11 @@ wheels = [
 
 [[package]]
 name = "validators"
-version = "0.22.0"
+version = "0.35.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/9b/21/40a249498eee5a244a017582c06c0af01851179e2617928063a3d628bc8f/validators-0.22.0.tar.gz", hash = "sha256:77b2689b172eeeb600d9605ab86194641670cdb73b60afd577142a9397873370", size = 41479, upload-time = "2023-09-02T09:17:59.054Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/53/66/a435d9ae49850b2f071f7ebd8119dd4e84872b01630d6736761e6e7fd847/validators-0.35.0.tar.gz", hash = "sha256:992d6c48a4e77c81f1b4daba10d16c3a9bb0dbb79b3a19ea847ff0928e70497a", size = 73399, upload-time = "2025-05-01T05:42:06.7Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/3a/0c/785d317eea99c3739821718f118c70537639aa43f96bfa1d83a71f68eaf6/validators-0.22.0-py3-none-any.whl", hash = "sha256:61cf7d4a62bbae559f2e54aed3b000cea9ff3e2fdbe463f51179b92c58c9585a", size = 26195, upload-time = "2023-09-02T09:17:56.595Z" },
+    { url = "https://files.pythonhosted.org/packages/fa/6e/3e955517e22cbdd565f2f8b2e73d52528b14b8bcfdb04f62466b071de847/validators-0.35.0-py3-none-any.whl", hash = "sha256:e8c947097eae7892cb3d26868d637f79f47b4a0554bc6b80065dfe5aac3705dd", size = 44712, upload-time = "2025-05-01T05:42:04.203Z" },
 ]
 
 [[package]]

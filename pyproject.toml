@@ -64,7 +64,7 @@ backend = [
     "markupsafe==3.0.2",
     "mccabe==0.6.1",
     "mdurl==0.1.2",
-    "nodeenv==1.8.0",
+    "nodeenv==1.9.1",
     "numpy==1.26.2",
     "packaging==25.0",
     "pandas==2.3.1",

@@ -85,7 +85,7 @@ backend = [
     "pyyaml==6.0.3",
     "referencing==0.36.2",
     "requests>=2.32.3,<3.0.0",
-    "rich==13.7.0",
+    "rich==14.2.0",
     "rpds-py==0.27.1",
     "scikit-learn>=1.5.2,<2.0.0",
     "scipy==1.16.1",

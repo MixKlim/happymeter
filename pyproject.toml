@@ -104,7 +104,7 @@ backend = [
     "uvicorn==0.35.0",
     "validators==0.35.0",
     "virtualenv==20.33.0",
-    "watchdog==3.0.0",
+    "watchdog==6.0.0",
     "zipp>=3.20.2,<4.0.0",
     "sqlalchemy>=2.0.36,<3.0.0",
     "psycopg2-binary>=2.9.10,<3.0.0",

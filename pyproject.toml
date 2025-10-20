@@ -96,7 +96,7 @@ backend = [
     "threadpoolctl==3.6.0",
     "toml==0.10.2",
     "tomli==2.3.0",
-    "toolz==1.0.0",
+    "toolz==1.1.0",
     "tornado==6.5.2",
     "typing-extensions==4.15.0",
     "tzdata==2025.2",

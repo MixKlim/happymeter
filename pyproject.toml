@@ -101,7 +101,7 @@ backend = [
     "typing-extensions==4.15.0",
     "tzdata==2025.2",
     "urllib3>=2.2.3,<3.0.0",
-    "uvicorn==0.35.0",
+    "uvicorn==0.38.0",
     "validators==0.35.0",
     "virtualenv==20.33.0",
     "watchdog==6.0.0",

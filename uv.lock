@@ -612,7 +612,7 @@ dev = [
     { name = "ipykernel", specifier = ">=6.29.5,<7.0.0" },
     { name = "isort", specifier = "==7.0.0" },
     { name = "mypy", specifier = "==1.18.2" },
-    { name = "pip-tools", specifier = "==7.5.1" },
+    { name = "pip-tools", specifier = "==7.5.2" },
     { name = "pre-commit", specifier = "==4.3.0" },
     { name = "pytest", specifier = ">=8.3.3,<9.0.0" },
     { name = "pytest-asyncio", specifier = ">=0.24.0,<1.0.0" },
@@ -1079,7 +1079,7 @@ wheels = [
 
 [[package]]
 name = "pip-tools"
-version = "7.5.1"
+version = "7.5.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "build" },
@@ -1089,9 +1089,9 @@ dependencies = [
     { name = "setuptools" },
     { name = "wheel" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/94/a1/54ac29bdb98660f2b9aeab8c2bf105595614edc7858d899fd4ec1bfaad20/pip_tools-7.5.1.tar.gz", hash = "sha256:a051a94794ba52df9acad2d7c9b0b09ae001617db458a543f8287fea7b89c2cf", size = 160910, upload-time = "2025-10-02T08:57:55.655Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c4/79/d149fb40bc425ad9defcb8ff73c65088bbc36a84b1825e035397d1c40624/pip_tools-7.5.2.tar.gz", hash = "sha256:2d64d72da6a044da1110257d333960563d7a4743637e8617dd2610ae7b82d60f", size = 164815, upload-time = "2025-11-12T22:46:12.627Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a1/27/76ffe2fa49527ef618950ca368f9d8dfdbb15efa088eb72b17066bbc1173/pip_tools-7.5.1-py3-none-any.whl", hash = "sha256:f5ff803823529edc0e6e40c86b1aa7da7266fb1078093c8beea4e5b77877036a", size = 65297, upload-time = "2025-10-02T08:57:53.77Z" },
+    { url = "https://files.pythonhosted.org/packages/98/c1/61aef9517201b43cc20f4a5c9339a072644cbaf0e9ce4e4970c2a105f766/pip_tools-7.5.2-py3-none-any.whl", hash = "sha256:2fe16db727bbe5bf28765aeb581e792e61be51fc275545ef6725374ad720a1ce", size = 66905, upload-time = "2025-11-12T22:46:11.374Z" },
 ]
 
 [[package]]

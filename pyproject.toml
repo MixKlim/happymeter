@@ -76,7 +76,7 @@ backend = [
     "protobuf==6.32.0",
     "pyarrow==14.0.2",
     "pycodestyle==2.8.0",
-    "pydantic==1.10.16",
+    "pydantic==2.12.4",
     "pydantic-core==2.41.5",
     "pydeck==0.8.1b0",
     "pygments==2.19.2",

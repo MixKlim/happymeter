@@ -35,7 +35,7 @@ jobs:
         run: uv run pytest --doctest-modules --junitxml=junit/test-results-${{ env.PYTHON_VERSION }}.xml --cov=. --cov-report=xml --cov-report=html
 
       - name: Upload test results
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: pytest-results-${{ env.PYTHON_VERSION }}
           path: junit/test-results-${{ env.PYTHON_VERSION }}.xml

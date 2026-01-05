@@ -1,34 +1,12 @@
 services:
-  postgres:
-    image: postgres:latest
-    container_name: database-container
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_HOST: ${POSTGRES_HOST}
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    ports:
-      - 5432:5432
-    networks:
-      - deploy_network
-
   backend:
     image: happymeter-backend:latest
     build:
       context: .
       dockerfile: Dockerfile.backend
     container_name: backend-container
-    environment:
-      POSTGRES_HOST: ${POSTGRES_HOST}
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - 8080:8080
-    depends_on:
-      - postgres
     networks:
       - deploy_network
 
@@ -50,6 +28,3 @@ services:
 networks:
   deploy_network:
     driver: bridge
-
-volumes:
-  postgres_data:

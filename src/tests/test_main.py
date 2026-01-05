@@ -40,6 +40,7 @@ def mock_read_from_db() -> Generator[AsyncMock, None, None]:
         "src.app.main.read_from_db",
         return_value=[
             HappyPrediction(
+                id=1,
                 city_services=5,
                 housing_costs=4,
                 school_quality=3,
@@ -65,11 +66,11 @@ def mock_read_from_db() -> Generator[AsyncMock, None, None]:
                 "POSTGRES_PASSWORD": "password",
                 "POSTGRES_DB": "test_db",
             },
-            "postgresql://user:password@localhost/test_db",
+            f"{Path(__file__).resolve().parent.parent.absolute() / 'database' / 'predictions.duckdb'}",
         ),
         (
             {},
-            f"sqlite:///{Path(__file__).resolve().parent.parent.absolute() / 'database' / 'predictions.db'}",
+            f"{Path(__file__).resolve().parent.parent.absolute() / 'database' / 'predictions.duckdb'}",
         ),
     ],
 )

@@ -3,33 +3,19 @@
 # Set variables
 RESOURCE_GROUP_NAME="happymeter"
 LOCATION="westeurope"
-POSTGRES_DB_SERVER_NAME="happymeter"
 ENVIRONMENT_NAME="happymeter"
 LAW_NAME="happymeter"
 ACR_NAME="happyregistry"
 BACKEND_NAME="happymeter-backend"
 FRONTEND_NAME="happymeter-frontend"
+STORAGE_ACCOUNT_NAME="happymeterdb$(date +%s | tail -c 6)"
+STORAGE_SHARE_NAME="duckdb-data"
 TAG=1
 
 #####################################################################################################
 
 # Create resource group
 az group create --name $RESOURCE_GROUP_NAME --location $LOCATION
-
-# Read .env file into key-value pairs
-if [ -f .env ]; then export $(grep -v '^#' .env | xargs); fi
-
-#####################################################################################################
-
-# Create Postgres server + database
-az postgres flexible-server create --resource-group $RESOURCE_GROUP_NAME --name $POSTGRES_DB_SERVER_NAME \
-  --location $LOCATION --admin-user $POSTGRES_USER --admin-password $POSTGRES_PASSWORD --sku-name Standard_B1ms \
-  --tier Burstable --storage-size 32 --version 16 --public-access 0.0.0.0 \
-  --database-name $POSTGRES_DB --create-default-database Disabled
-
-# Get Postgres server URL
-POSTGRES_DB_SERVER_URL=$(az postgres flexible-server show --resource-group $RESOURCE_GROUP_NAME \
-  --name $POSTGRES_DB_SERVER_NAME --query "fullyQualifiedDomainName" --output tsv)
 
 #####################################################################################################
 
@@ -56,9 +42,35 @@ LAW_PRIMARY_KEY=$(az monitor log-analytics workspace get-shared-keys \
 az containerapp env create --name $ENVIRONMENT_NAME --resource-group $RESOURCE_GROUP_NAME \
   --logs-workspace-id $LAW_ID --logs-workspace-key $LAW_PRIMARY_KEY --location $LOCATION
 
-# Create base container app for backend
+##################################################################################################
+
+# Create base container app for backend with persistent storage for DuckDB
 az containerapp create --name $BACKEND_NAME --resource-group $RESOURCE_GROUP_NAME \
-    --environment $ENVIRONMENT_NAME --secrets "postgres-password=$POSTGRES_PASSWORD"
+    --environment $ENVIRONMENT_NAME \
+    --storage-mounts duckdb-volume=/app/database \
+    --storage-type AzureFile \
+    --storage-account-name $STORAGE_ACCOUNT_NAME \
+    --storage-account-key "$STORAGE_ACCOUNT_KEY" \
+    --storage-share-name $STORAGE_SHAREersistent data storage
+echo "Creating Storage Account for DuckDB persistence..."
+az storage account create --resource-group $RESOURCE_GROUP_NAME --name $STORAGE_ACCOUNT_NAME \
+  --location $LOCATION --sku Standard_LRS --kind StorageV2
+
+# Get storage account connection string
+STORAGE_CONNECTION_STRING=$(az storage account show-connection-string \
+  --resource-group $RESOURCE_GROUP_NAME --name $STORAGE_ACCOUNT_NAME --query connectionString -o tsv)
+
+# Get storage account key
+STORAGE_ACCOUNT_KEY=$(az storage account keys list --resource-group $RESOURCE_GROUP_NAME \
+  --name $STORAGE_ACCOUNT_NAME --query "[0].value" -o tsv)
+
+# Create file share for DuckDB data
+az storage share create --name $STORAGE_SHARE_NAME --account-name $STORAGE_ACCOUNT_NAME \
+  --account-key $STORAGE_ACCOUNT_KEY --quota 1
+
+#####################################################################################################
+az containerapp create --name $BACKEND_NAME --resource-group $RESOURCE_GROUP_NAME \
+    --environment $ENVIRONMENT_NAME
 
 # Log in to the ACR to interact with it (authenticate using Azure CLI credentials)
 az acr login --name $ACR_NAME
@@ -73,9 +85,7 @@ az acr build --image $BACKEND_NAME:$TAG --registry $ACR_NAME --file Dockerfile.b
 az containerapp up --name $BACKEND_NAME --resource-group $RESOURCE_GROUP_NAME \
     --environment $ENVIRONMENT_NAME --image $ACR_NAME.azurecr.io/$BACKEND_NAME:$TAG \
     --target-port 8080 --registry-server $ACR_NAME.azurecr.io --registry-username $ACR_NAME \
-    --registry-password $ACR_PASSWORD --ingress external \
-    --env-vars "POSTGRES_USER=$POSTGRES_USER" "POSTGRES_PASSWORD=secretref:postgres-password" \
-    "POSTGRES_HOST=$POSTGRES_DB_SERVER_URL" "POSTGRES_DB=$POSTGRES_DB"
+    --registry-password $ACR_PASSWORD --ingress external
 
 # Get the URL of the backend container app
 BACKEND_HOST=$(az containerapp show --name $BACKEND_NAME --resource-group $RESOURCE_GROUP_NAME \

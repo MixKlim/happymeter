@@ -1,15 +1,14 @@
-from typing import Dict, List, Type
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Dict, List
 
-from sqlalchemy import Column, Float, Integer, create_engine
-from sqlalchemy.orm import declarative_base, sessionmaker
+import duckdb
 
 from src.app.logger import logger
 
-# Define the Base class for SQLAlchemy models
-Base: Type[declarative_base] = declarative_base()
 
-
-class HappyPrediction(Base):
+@dataclass
+class HappyPrediction:
     """
     A class that represents the happy_predictions table in the database.
 
@@ -25,32 +24,55 @@ class HappyPrediction(Base):
         probability (float): Probability of the prediction.
     """
 
-    __tablename__ = "happy_predictions"
+    id: int
+    city_services: int
+    housing_costs: int
+    school_quality: int
+    local_policies: int
+    maintenance: int
+    social_events: int
+    prediction: int
+    probability: float
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    city_services = Column(Integer, nullable=False)
-    housing_costs = Column(Integer, nullable=False)
-    school_quality = Column(Integer, nullable=False)
-    local_policies = Column(Integer, nullable=False)
-    maintenance = Column(Integer, nullable=False)
-    social_events = Column(Integer, nullable=False)
-    prediction = Column(Integer, nullable=False)
-    probability = Column(Float, nullable=False)
+    class Config:
+        """Config for compatibility with SQLAlchemy ORM mode."""
+
+        orm_mode = True
 
 
-def init_db(DATABASE_URL: str) -> bool:
+def init_db(database_path: str) -> bool:
     """
     Initialize the database and ensure the required table exists.
 
     Args:
-        DATABASE_URL (str): Database URL.
+        database_path (str): Path to DuckDB database file.
 
     Returns:
         bool: True if the database was initialized successfully, False otherwise.
     """
     try:
-        engine = create_engine(DATABASE_URL)
-        Base.metadata.create_all(engine)  # Create the table if it doesn't exist
+        # Ensure the parent directory exists so DuckDB can create the file
+        Path(database_path).parent.mkdir(parents=True, exist_ok=True)
+
+        conn = duckdb.connect(database_path)
+        # Create sequence first so the table's DEFAULT nextval('seq_id') can reference it
+        conn.execute("CREATE SEQUENCE IF NOT EXISTS seq_id START 1")
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS happy_predictions (
+                id INTEGER PRIMARY KEY DEFAULT nextval('seq_id'),
+                city_services INTEGER NOT NULL,
+                housing_costs INTEGER NOT NULL,
+                school_quality INTEGER NOT NULL,
+                local_policies INTEGER NOT NULL,
+                maintenance INTEGER NOT NULL,
+                social_events INTEGER NOT NULL,
+                prediction INTEGER NOT NULL,
+                probability FLOAT NOT NULL
+            )
+            """
+        )
+        conn.close()
         logger.info("Database initialized successfully!")
     except Exception as e:
         logger.error(f"Error initializing database: {e}")
@@ -59,62 +81,79 @@ def init_db(DATABASE_URL: str) -> bool:
 
 
 def save_to_db(
-    DATABASE_URL: str, data: Dict[str, int], prediction: int, probability: float
+    database_path: str, data: Dict[str, int], prediction: int, probability: float
 ) -> None:
     """
     Save the data into the database.
 
     Args:
-        DATABASE_URL (str): Database URL.
+        database_path (str): Path to DuckDB database file.
         data (Dict[str, int]): Input data containing survey measurements.
         prediction (int): The predicted happiness value.
         probability (float): The prediction probability.
     """
     try:
-        engine = create_engine(DATABASE_URL)
-        SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-        session = SessionLocal()
+        # Ensure directory exists before writing
+        Path(database_path).parent.mkdir(parents=True, exist_ok=True)
 
-        # Create an instance of HappyPrediction
-        new_record = HappyPrediction(
-            city_services=data["city_services"],
-            housing_costs=data["housing_costs"],
-            school_quality=data["school_quality"],
-            local_policies=data["local_policies"],
-            maintenance=data["maintenance"],
-            social_events=data["social_events"],
-            prediction=prediction,
-            probability=probability,
+        conn = duckdb.connect(database_path)
+        conn.execute(
+            """
+            INSERT INTO happy_predictions (
+                city_services, housing_costs, school_quality, local_policies,
+                maintenance, social_events, prediction, probability
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            [
+                data["city_services"],
+                data["housing_costs"],
+                data["school_quality"],
+                data["local_policies"],
+                data["maintenance"],
+                data["social_events"],
+                prediction,
+                probability,
+            ],
         )
-
-        # Add the new record to the session and commit the transaction
-        session.add(new_record)
-        session.commit()
-        session.close()
-
+        conn.close()
         logger.info("Data saved to the database successfully!")
     except Exception as e:
         logger.error(f"Error saving data to the database: {e}")
 
 
-def read_from_db(DATABASE_URL: str) -> List[HappyPrediction]:
+def read_from_db(database_path: str) -> List[HappyPrediction]:
     """
     Read the data from the database.
 
     Args:
-        DATABASE_URL (str): Database URL.
+        database_path (str): Path to DuckDB database file.
 
     Returns:
         List[HappyPrediction]: All rows of a query result as instances of HappyPrediction.
     """
     try:
-        engine = create_engine(DATABASE_URL)
-        SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-        session = SessionLocal()
+        # Ensure directory exists; if it doesn't, there are no records
+        Path(database_path).parent.mkdir(parents=True, exist_ok=True)
 
-        # Query the table to get all the records
-        records = session.query(HappyPrediction).all()
-        session.close()
+        conn = duckdb.connect(database_path)
+        result = conn.execute("SELECT * FROM happy_predictions ORDER BY id").fetchall()
+        conn.close()
+
+        # Convert result tuples to HappyPrediction objects
+        records = [
+            HappyPrediction(
+                id=row[0],
+                city_services=row[1],
+                housing_costs=row[2],
+                school_quality=row[3],
+                local_policies=row[4],
+                maintenance=row[5],
+                social_events=row[6],
+                prediction=row[7],
+                probability=row[8],
+            )
+            for row in result
+        ]
 
         logger.info("Data read from the database successfully!")
     except Exception as e:

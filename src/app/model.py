@@ -2,7 +2,7 @@ from pathlib import Path
 
 import joblib
 import pandas as pd
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from sklearn.ensemble import GradientBoostingClassifier
 
 
@@ -75,8 +75,7 @@ class HappyPrediction(SurveyMeasurement):
     prediction: int
     probability: float
 
-    class Config:
-        orm_mode = True  # For compatibility with SQLAlchemy ORM
+    model_config = ConfigDict(from_attributes=True)
 
 
 class HappyModel:

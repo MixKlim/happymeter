@@ -161,6 +161,7 @@ cython_debug/
 
 # Local database
 src/database/predictions.db
+src/database/predictions.duckdb
 
 # Local ML model
 src/model/happy_model.pkl

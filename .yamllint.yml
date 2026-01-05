@@ -1,0 +1,11 @@
+extends: relaxed
+
+rules:
+  new-lines:
+    type: platform
+  line-length:
+    max: 120
+  indentation:
+    spaces: consistent
+    indent-sequences: consistent
+    check-multi-line-strings: false

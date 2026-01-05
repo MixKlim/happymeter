@@ -19,7 +19,7 @@ ML model based on [Somerville Happiness Survey Data Set](https://archive.ics.uci
 
 ![](https://raw.githubusercontent.com/mixklim/happymeter/main/media/frontend_2.png)
 
-### SQLite / PostgreSQL Database
+### DuckDB Database
 
 ![](https://raw.githubusercontent.com/mixklim/happymeter/main/media/database.png)
 
@@ -38,7 +38,6 @@ ML model based on [Somerville Happiness Survey Data Set](https://archive.ics.uci
 
 ### Containers:
 
-- Populate `.env` with `POSTGRES_HOST`, `POSTGRES_USER`, `POSTGRES_PASSWORD` and `POSTGRES_DB`
 - Docker backend: `make docker-backend`
 - Docker frontend: `make docker-frontend`
 - Docker compose: `make docker-compose`

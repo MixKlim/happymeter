@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 from typing import List
 
@@ -51,20 +50,17 @@ app.add_middleware(
 
 def get_database_url() -> str:
     """
-    Check what type of database to use. Either local (SQLite) or remote (PostgreSQL).
+    Get DuckDB database path.
 
     Returns:
         str: The database URL to be used by the application.
     """
-    if "POSTGRES_HOST" in os.environ and os.environ["POSTGRES_HOST"]:
-        return f"postgresql://{os.environ['POSTGRES_USER']}:{os.environ['POSTGRES_PASSWORD']}@{os.environ['POSTGRES_HOST']}/{os.environ['POSTGRES_DB']}"
-    else:
-        DB_PATH = (
-            Path(__file__).resolve().parent.parent.absolute()
-            / "database"
-            / "predictions.db"
-        )
-        return f"sqlite:///{DB_PATH}"
+    DB_PATH = (
+        Path(__file__).resolve().parent.parent.absolute()
+        / "database"
+        / "predictions.duckdb"
+    )
+    return str(DB_PATH)
 
 
 DATABASE_URL = get_database_url()
@@ -89,7 +85,7 @@ async def standard_validation_exception_handler(
     logger.error(f"422 Validation Error: {exc.errors()} | Request Body: {exc.body}")
 
     return JSONResponse(
-        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
         content=jsonable_encoder({"detail": exc.errors(), "body": exc.body}),
     )
 
@@ -127,7 +123,7 @@ async def predict_happiness(measurement: SurveyMeasurement) -> dict:
         dict: A dictionary containing the prediction and its probability.
     """
     try:
-        data = measurement.dict()
+        data = measurement.model_dump()
         prediction, probability = await model.predict_happiness(
             data["city_services"],
             data["housing_costs"],

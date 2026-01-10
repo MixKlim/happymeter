@@ -165,3 +165,8 @@ src/database/predictions.duckdb
 
 # Local ML model
 src/model/happy_model.pkl
+
+# Terraform files
+*/terraform.tfstate*
+*/.terraform/
+*/.terraform.lock.hcl

@@ -44,4 +44,20 @@ ML model based on [Somerville Happiness Survey Data Set](https://archive.ics.uci
 
 ### Deploy to Azure (Container Apps):
 
-- Run `bash deploy_azure.sh`
+- Infrastructure is managed with Terraform.
+- Quick steps:
+```bash
+cd infra
+call load_env.bat
+terraform init
+terraform apply --auto-approve
+
+BACKEND_NAME="happymeter-backend"
+FRONTEND_NAME="happymeter-frontend"
+ACR_NAME=$(terraform output -raw acr_name)
+TAG=1
+
+az acr login --name $ACR_NAME
+docker buildx build --platform linux/amd64 --push -t $ACR_NAME.azurecr.io/$BACKEND_NAME:$TAG -f ../Dockerfile.backend ..
+docker buildx build --platform linux/amd64 --push -t $ACR_NAME.azurecr.io/$FRONTEND_NAME:$TAG -f ../Dockerfile.frontend ..
+```

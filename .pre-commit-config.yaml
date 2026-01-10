@@ -22,7 +22,7 @@ repos:
         additional_dependencies: ["types-requests"]
 
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.9.21
+    rev: 0.9.24
     hooks:
       - id: uv-lock
 
@@ -33,7 +33,7 @@ repos:
         name: isort (python)
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.10
+    rev: v0.14.11
     hooks:
       - id: ruff-check
         types_or: [python, pyi, jupyter]

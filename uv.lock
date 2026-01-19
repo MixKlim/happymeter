@@ -576,7 +576,7 @@ backend = [
     { name = "pycodestyle", specifier = "==2.8.0" },
     { name = "pydantic", specifier = "==2.12.5" },
     { name = "pydantic-core", specifier = "==2.41.5" },
-    { name = "pydeck", specifier = "==0.8.1b0" },
+    { name = "pydeck", specifier = "==0.9.1" },
     { name = "pygments", specifier = "==2.19.2" },
     { name = "pyproject-hooks", specifier = "==1.2.0" },
     { name = "pytz", specifier = "==2023.3.post1" },
@@ -1311,15 +1311,15 @@ wheels = [
 
 [[package]]
 name = "pydeck"
-version = "0.8.1b0"
+version = "0.9.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "jinja2" },
     { name = "numpy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/2e/74/b5f3cfc27405077f4ed0c8eb3783b1c85336c08d82d7c995107b6e1f410f/pydeck-0.8.1b0.tar.gz", hash = "sha256:9e0a67890ab061b8c6080e06f8c780934c00355a7114291c884f055f3fc0dc25", size = 2996640, upload-time = "2023-04-15T06:27:17.598Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a1/ca/40e14e196864a0f61a92abb14d09b3d3da98f94ccb03b49cf51688140dab/pydeck-0.9.1.tar.gz", hash = "sha256:f74475ae637951d63f2ee58326757f8d4f9cd9f2a457cf42950715003e2cb605", size = 3832240, upload-time = "2024-05-10T15:36:21.153Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/10/4b/2fc80540e2d3903452245bb657c7f758ec7342420507d1e4091b0161856e/pydeck-0.8.1b0-py2.py3-none-any.whl", hash = "sha256:c89b3dd76f9991140a33b886b336c762105e9c9def8e842e891bc72dbce8a4ce", size = 4796167, upload-time = "2023-04-15T06:27:13.13Z" },
+    { url = "https://files.pythonhosted.org/packages/ab/4c/b888e6cf58bd9db9c93f40d1c6be8283ff49d88919231afe93a6bcf61626/pydeck-0.9.1-py2.py3-none-any.whl", hash = "sha256:b3f75ba0d273fc917094fa61224f3f6076ca8752b93d46faf3bcfd9f9d59b038", size = 6900403, upload-time = "2024-05-10T15:36:17.36Z" },
 ]
 
 [[package]]

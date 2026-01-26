@@ -37,7 +37,7 @@ backend = [
     "attrs==25.4.0",
     "blinker==1.9.0",
     "build==1.3.0",
-    "cachetools==6.2.2",
+    "cachetools==6.2.5",
     "certifi>=2024.8.30,<2026.0.0",
     "cfgv==3.5.0",
     "charset-normalizer==3.4.4",

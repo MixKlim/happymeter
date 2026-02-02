@@ -68,7 +68,7 @@ backend = [
     "numpy==2.4.1",
     "packaging==25.0",
     "pandas==2.3.3",
-    "pathspec==0.12.1",
+    "pathspec==1.0.4",
     "pillow>=10.4.0,<13.0.0",
     "pip-chill==1.0.3",
     "platformdirs==4.5.1",

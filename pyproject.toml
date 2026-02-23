@@ -14,7 +14,7 @@ dependencies = []
 dev = [
     "black>=24.8.0,<26.0.0",
     "flake8==4.0.1",
-    "isort==7.0.0",
+    "isort==8.0.0",
     "mypy==1.19.1",
     "pre-commit==4.5.1",
     "pip-tools==7.5.3",

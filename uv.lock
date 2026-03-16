@@ -569,7 +569,7 @@ backend = [
     { name = "pandas", specifier = "==2.3.3" },
     { name = "pathspec", specifier = "==1.0.4" },
     { name = "pillow", specifier = ">=10.4.0,<13.0.0" },
-    { name = "pip-chill", specifier = "==1.0.3" },
+    { name = "pip-chill", specifier = "==1.0.5" },
     { name = "platformdirs", specifier = "==4.5.1" },
     { name = "pluggy", specifier = ">=1.3.0,<2.0.0" },
     { name = "protobuf", specifier = "==6.33.5" },
@@ -1097,11 +1097,11 @@ wheels = [
 
 [[package]]
 name = "pip-chill"
-version = "1.0.3"
+version = "1.0.5"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/0c/1d/eec0f393fe17675792e302a82cd6c1e77e261d212c7cbf70072727a6e016/pip-chill-1.0.3.tar.gz", hash = "sha256:42c3b888efde0b3dc5d5307b92fae5fb67695dd9c29c9d31891b9505dd8b735a", size = 19455, upload-time = "2023-04-15T12:29:58.234Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/1c/b6/bf36516940f5069384ae0908c5b8c334acf3a6b047471ef80dd9f1acf2ed/pip_chill-1.0.5.tar.gz", hash = "sha256:e79bc514abfe144f2ef52290f59677d279cb05b4084fa9f814bbe5cc0ea04c1c", size = 18498, upload-time = "2026-03-15T15:55:11.229Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/de/53/6693cc6d71854b024b243139b3fc1f71220abf715e4eb5db94c2a13637c3/pip_chill-1.0.3-py2.py3-none-any.whl", hash = "sha256:452a38edbcdfc333301c438c26ba00a0762d2034fe26a235d8587134453ccdb1", size = 6890, upload-time = "2023-04-15T12:29:56.554Z" },
+    { url = "https://files.pythonhosted.org/packages/28/71/7f572eea37680aa1e37cbfc82a5cfb3cfc4cd8b0d8425c15e5723c4e4165/pip_chill-1.0.5-py3-none-any.whl", hash = "sha256:732fae3d695950f6e47ad849480fdfd0fb95fa2f2eed5d9c22354f44adad9f7b", size = 6653, upload-time = "2026-03-15T15:55:09.95Z" },
 ]
 
 [[package]]

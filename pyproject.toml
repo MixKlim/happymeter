@@ -79,7 +79,7 @@ backend = [
     "pydantic==2.12.5",
     "pydantic-core==2.41.5",
     "pydeck==0.9.1",
-    "pygments==2.19.2",
+    "pygments==2.20.0",
     "pyproject-hooks==1.2.0",
     "pytz==2025.2",
     "pyyaml==6.0.3",

@@ -1,5 +1,8 @@
 name: CI Python
 
+permissions:
+  contents: read
+
 on: [push]
 
 env:
@@ -55,6 +58,7 @@ jobs:
         with:
           recreate: true
           path: code-coverage-results.md
+          permissions: write-all
 
       - name: Write to Job Summary
         run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY

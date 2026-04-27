@@ -1,6 +1,6 @@
 # happymeter 😊
 
-[![Build](https://github.com/mixklim/happymeter/actions/workflows/build.yml/badge.svg)](https://github.com/mixklim/happymeter/actions/workflows/build.yml)
+[![Build](https://github.com/MixKlim/happymeter/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/MixKlim/happymeter/actions/workflows/build.yml)
 [![Coverage Status](https://raw.githubusercontent.com/mixklim/happymeter/main/reports/coverage/coverage-badge.svg?dummy=8484744)](https://raw.githubusercontent.com/mixklim/happymeter/main/reports/coverage/index.html)
 
 ### Find out how happy you are

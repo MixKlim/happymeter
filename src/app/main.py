@@ -89,7 +89,7 @@ async def standard_validation_exception_handler(
     logger.error(f"422 Validation Error: {exc.errors()} | Request Body: {exc.body}")
 
     return JSONResponse(
-        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
         content=jsonable_encoder({"detail": exc.errors(), "body": exc.body}),
     )
 
@@ -127,7 +127,7 @@ async def predict_happiness(measurement: SurveyMeasurement) -> dict:
         dict: A dictionary containing the prediction and its probability.
     """
     try:
-        data = measurement.dict()
+        data = measurement.model_dump()
         prediction, probability = await model.predict_happiness(
             data["city_services"],
             data["housing_costs"],

@@ -24,6 +24,14 @@ cache:
 	@echo "Clear uv's cache"
 	uv cache clear PyPI --all --no-interaction
 
+audit:
+	@echo "Running uv audit"
+	uv audit --upgrade
+
+sync:
+	@echo "Running uv sync"
+	uv sync --locked --all-groups --all-extras
+
 eval:
 	@echo "Running pre-commit"
 	uv run pre-commit run --all-files
@@ -39,7 +47,7 @@ cov:
 	coverage html
 	genbadge coverage --output-file reports/coverage/coverage-badge.svg
 
-build: eval test cov
+build: audit sync eval test cov
 
 docker-backend:
 	@echo "Creating docker image and container for backend"

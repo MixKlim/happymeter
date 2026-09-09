@@ -1,5 +1,3 @@
-SHELL=CMD
-
 help:
 	@echo "  backend           - Run the backend using uvicorn"
 	@echo "  frontend          - Run the frontend using Streamlit"
@@ -24,6 +22,14 @@ cache:
 	@echo "Clear uv's cache"
 	uv cache clear PyPI --all --no-interaction
 
+audit:
+	@echo "Running uv audit"
+	uv audit --upgrade
+
+sync:
+	@echo "Running uv sync"
+	uv sync --locked --all-groups --all-extras
+
 eval:
 	@echo "Running pre-commit"
 	uv run pre-commit run --all-files
@@ -34,12 +40,12 @@ test:
 
 cov:
 	@echo "Creating coverage badge"
-	coverage report
-	coverage xml -o ./reports/coverage/coverage.xml
-	coverage html
-	genbadge coverage --output-file reports/coverage/coverage-badge.svg
+	uv run coverage report
+	uv run coverage xml -o ./reports/coverage/coverage.xml
+	uv run coverage html
+	uv run genbadge coverage --output-file reports/coverage/coverage-badge.svg
 
-build: eval test cov
+build: audit sync eval test cov
 
 docker-backend:
 	@echo "Creating docker image and container for backend"

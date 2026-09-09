@@ -1,12 +1,11 @@
-from typing import Dict, List, Type
-
 from sqlalchemy import Column, Float, Integer, create_engine
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 from src.app.logger import logger
 
 # Define the Base class for SQLAlchemy models
-Base: Type[declarative_base] = declarative_base()
+Base: type[declarative_base] = declarative_base()
 
 
 class HappyPrediction(Base):
@@ -52,14 +51,14 @@ def init_db(DATABASE_URL: str) -> bool:
         engine = create_engine(DATABASE_URL)
         Base.metadata.create_all(engine)  # Create the table if it doesn't exist
         logger.info("Database initialized successfully!")
-    except Exception as e:
+    except SQLAlchemyError as e:
         logger.error(f"Error initializing database: {e}")
         return False
     return True
 
 
 def save_to_db(
-    DATABASE_URL: str, data: Dict[str, int], prediction: int, probability: float
+    DATABASE_URL: str, data: dict[str, int], prediction: int, probability: float
 ) -> None:
     """
     Save the data into the database.
@@ -93,11 +92,11 @@ def save_to_db(
         session.close()
 
         logger.info("Data saved to the database successfully!")
-    except Exception as e:
+    except SQLAlchemyError as e:
         logger.error(f"Error saving data to the database: {e}")
 
 
-def read_from_db(DATABASE_URL: str) -> List[HappyPrediction]:
+def read_from_db(DATABASE_URL: str) -> list[HappyPrediction]:
     """
     Read the data from the database.
 
@@ -117,7 +116,7 @@ def read_from_db(DATABASE_URL: str) -> List[HappyPrediction]:
         session.close()
 
         logger.info("Data read from the database successfully!")
-    except Exception as e:
+    except SQLAlchemyError as e:
         logger.error(f"Error reading data from database: {e}")
         return []
     return records

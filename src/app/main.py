@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-from typing import List
 
 import uvicorn
 from fastapi import FastAPI, HTTPException, Request, status
@@ -11,6 +10,7 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from jinja2 import Environment, FileSystemLoader
+from sqlalchemy.exc import SQLAlchemyError
 
 from src.app import log_config
 from src.app.database import HappyPrediction, init_db, read_from_db, save_to_db
@@ -56,7 +56,7 @@ def get_database_url() -> str:
     Returns:
         str: The database URL to be used by the application.
     """
-    if "POSTGRES_HOST" in os.environ and os.environ["POSTGRES_HOST"]:
+    if os.environ.get("POSTGRES_HOST"):
         return f"postgresql://{os.environ['POSTGRES_USER']}:{os.environ['POSTGRES_PASSWORD']}@{os.environ['POSTGRES_HOST']}/{os.environ['POSTGRES_DB']}"
     else:
         DB_PATH = (
@@ -143,7 +143,7 @@ async def predict_happiness(measurement: SurveyMeasurement) -> dict:
 
         logger.info("Request handled successfully!")
         return {"prediction": prediction, "probability": probability}
-    except Exception as e:
+    except (AttributeError, TypeError, ValueError, RuntimeError, SQLAlchemyError) as e:
         # Unexpected error handling
         logger.error(f"Error handling request: {e}")
         raise HTTPException(status_code=500, detail="ERR_UNEXPECTED")
@@ -160,7 +160,7 @@ async def read_measurements(request: Request) -> HTMLResponse:
     Returns:
         HTMLResponse: A response containing the HTML representation of all saved measurements.
     """
-    rows: List[HappyPrediction] = read_from_db(DATABASE_URL)
+    rows: list[HappyPrediction] = read_from_db(DATABASE_URL)
 
     # Load the HTML template
     template = env.get_template("data.html")

@@ -6,7 +6,7 @@ on:
 
 env:
   PYTHON_VERSION: "3.12"
-  UV_VERSION: "0.7.9"
+  UV_VERSION: "0.12.12"
 
 permissions:
   contents: read

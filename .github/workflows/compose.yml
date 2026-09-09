@@ -49,8 +49,7 @@ jobs:
         run: docker-compose logs backend | grep -q "Uvicorn running" || exit 1
 
       - name: Frontend healthcheck
-        run: |
-          curl --fail http://localhost:8501/_stcore/health
+        run: curl --fail http://localhost:8501/_stcore/health
 
       - name: Tear down Docker Compose
         if: always()

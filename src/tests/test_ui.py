@@ -1,5 +1,7 @@
 import os
-from typing import Any, Dict, Generator, Optional, Tuple
+from collections.abc import Generator
+from pathlib import Path
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -11,7 +13,7 @@ from streamlit.testing.v1 import AppTest
 
 
 @pytest.fixture(scope="function")
-def mock_st() -> Generator[Tuple[MagicMock, MagicMock], None, None]:
+def mock_st() -> Generator[tuple[MagicMock, MagicMock], None, None]:
     """Provides mocked Streamlit success and error methods.
 
     Yields:
@@ -46,7 +48,8 @@ def setup_mock_response(
 # Test cases
 def test_app_run() -> None:
     """Tests that the Streamlit application runs without exceptions."""
-    at = AppTest.from_file("src/streamlit/ui.py").run()
+    app_path = Path(__file__).resolve().parents[1] / "streamlit" / "ui.py"
+    at = AppTest.from_file(app_path).run()
     assert not at.exception
 
 
@@ -57,7 +60,7 @@ def test_app_run() -> None:
         (None, "127.0.0.1:8080"),
     ],
 )
-def test_get_backend_host(env_var_value: Optional[str], expected_output: str) -> None:
+def test_get_backend_host(env_var_value: str | None, expected_output: str) -> None:
     """
     Test the `get_backend_host` function with various BACKEND_HOST environment variable settings.
 
@@ -106,8 +109,8 @@ def test_get_backend_host(env_var_value: Optional[str], expected_output: str) ->
 )
 def test_predict(
     mock_post: MagicMock,
-    mock_st: Tuple[MagicMock, MagicMock],
-    data: Dict[str, Any],
+    mock_st: tuple[MagicMock, MagicMock],
+    data: dict[str, Any],
     prediction: bool,
     probability: float,
     expected_message: str,
@@ -136,7 +139,7 @@ def test_predict(
 
 @patch("requests.post")
 def test_predict_http_fallback(
-    mock_post: MagicMock, mock_st: Tuple[MagicMock, MagicMock]
+    mock_post: MagicMock, mock_st: tuple[MagicMock, MagicMock]
 ) -> None:
     """Tests the predict function when the HTTPS request fails and the fallback to HTTP succeeds.
 
@@ -167,7 +170,7 @@ def test_predict_http_fallback(
 
 @patch("requests.post")
 def test_predict_failure(
-    mock_post: MagicMock, mock_st: Tuple[MagicMock, MagicMock]
+    mock_post: MagicMock, mock_st: tuple[MagicMock, MagicMock]
 ) -> None:
     """Tests the predict function when both HTTPS and HTTP requests fail.
 
@@ -194,7 +197,7 @@ def test_predict_failure(
 
 @patch("requests.post")
 def test_predict_no_button_pressed(
-    mock_post: MagicMock, mock_st: Tuple[MagicMock, MagicMock]
+    mock_post: MagicMock, mock_st: tuple[MagicMock, MagicMock]
 ) -> None:
     """Tests the `predict` function when the prediction button is not pressed.
 

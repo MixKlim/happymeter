@@ -1,15 +1,24 @@
 import os
+from collections.abc import Generator
 from pathlib import Path
-from typing import Dict, Generator
 from unittest.mock import AsyncMock, patch
 
+import httpx
 import pytest
-from fastapi.testclient import TestClient
+import pytest_asyncio
 
 from src.app.database import HappyPrediction
 from src.app.main import app, get_database_url
 
-client = TestClient(app=app)
+
+@pytest_asyncio.fixture
+async def client() -> httpx.AsyncClient:
+    """Return an ASGI test client that does not use the deprecated Starlette TestClient."""
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app=app),
+        base_url="http://testserver",
+    ) as async_client:
+        yield async_client
 
 
 @pytest.fixture
@@ -73,7 +82,7 @@ def mock_read_from_db() -> Generator[AsyncMock, None, None]:
         ),
     ],
 )
-def test_get_database_url(env_vars: Dict[str, str], expected_url: str) -> None:
+def test_get_database_url(env_vars: dict[str, str], expected_url: str) -> None:
     """
     Test the `get_database_url` function for both PostgreSQL and SQLite scenarios.
 
@@ -97,19 +106,23 @@ def test_get_database_url(env_vars: Dict[str, str], expected_url: str) -> None:
         os.environ.update(original_env)
 
 
-def test_root() -> None:
+@pytest.mark.asyncio
+async def test_root(client: httpx.AsyncClient) -> None:
     """Tests the root endpoint.
 
     Asserts:
         - The response status code is 200.
     """
-    response = client.get("/")
+    response = await client.get("/")
     assert response.status_code == 200, (
         "Expected status code 200 for a successful response"
     )
 
 
-def test_predict_happiness_success(mock_model: AsyncMock) -> None:
+@pytest.mark.asyncio
+async def test_predict_happiness_success(
+    mock_model: AsyncMock, client: httpx.AsyncClient
+) -> None:
     """Tests that the prediction endpoint returns the expected response on success.
 
     Args:
@@ -132,7 +145,7 @@ def test_predict_happiness_success(mock_model: AsyncMock) -> None:
     }
 
     # Act
-    response = client.post("/predict", json=test_data)
+    response = await client.post("/predict", json=test_data)
 
     # Assert
     assert response.status_code == 200, (
@@ -149,7 +162,10 @@ def test_predict_happiness_success(mock_model: AsyncMock) -> None:
     )
 
 
-def test_predict_happiness_unexpected_error(mock_model: AsyncMock) -> None:
+@pytest.mark.asyncio
+async def test_predict_happiness_unexpected_error(
+    mock_model: AsyncMock, client: httpx.AsyncClient
+) -> None:
     """Tests that the prediction endpoint handles unexpected errors gracefully.
 
     Args:
@@ -160,11 +176,11 @@ def test_predict_happiness_unexpected_error(mock_model: AsyncMock) -> None:
         - The response JSON contains the correct error detail.
     """
     # Arrange
-    mock_model.predict_happiness.side_effect = Exception("Unexpected error")
-    test_data: Dict[str, int] = {}
+    mock_model.predict_happiness.side_effect = RuntimeError("Unexpected error")
+    test_data: dict[str, int] = {}
 
     # Act
-    response = client.post("/predict", json=test_data)
+    response = await client.post("/predict", json=test_data)
 
     # Assert
     assert response.status_code == 500, (
@@ -173,7 +189,8 @@ def test_predict_happiness_unexpected_error(mock_model: AsyncMock) -> None:
     assert response.json() == {"detail": "ERR_UNEXPECTED"}
 
 
-def test_predict_happiness_invalid_input() -> None:
+@pytest.mark.asyncio
+async def test_predict_happiness_invalid_input(client: httpx.AsyncClient) -> None:
     """Tests that the prediction endpoint returns a 422 error on invalid input.
 
     Asserts:
@@ -185,15 +202,16 @@ def test_predict_happiness_invalid_input() -> None:
     }  # Missing required fields and invalid data
 
     # Act
-    response = client.post("/predict", json=invalid_data)
+    response = await client.post("/predict", json=invalid_data)
 
     # Assert
     assert response.status_code == 422, "Expected status code 422 for an invalid input"
 
 
 @patch("src.app.main.logger")
-def test_read_measurements(
-    mock_logger: AsyncMock, mock_read_from_db: AsyncMock
+@pytest.mark.asyncio
+async def test_read_measurements(
+    mock_logger: AsyncMock, mock_read_from_db: AsyncMock, client: httpx.AsyncClient
 ) -> None:
     """
     Tests the `read_measurements` endpoint.
@@ -204,7 +222,7 @@ def test_read_measurements(
     """
 
     # Act
-    response = client.get("/data")
+    response = await client.get("/data")
 
     # Assert
     assert response.status_code == 200, (

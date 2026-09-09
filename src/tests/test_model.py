@@ -80,9 +80,9 @@ def test_happy_model_initialization_train_model(
     mock_read_csv.return_value = mock_df
 
     # Simulate the model loading failure
-    mock_load.side_effect = Exception("Model not found")
+    mock_load.side_effect = FileNotFoundError("Model not found")
 
-    model = HappyModel(data_fname="test_data.csv", model_fname="test_model.pkl")  # noqa: F841
+    HappyModel(data_fname="test_data.csv", model_fname="test_model.pkl")
 
     # Assertions
     mock_read_csv.assert_called_once()

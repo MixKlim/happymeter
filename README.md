@@ -26,7 +26,8 @@ ML model based on [Somerville Happiness Survey Data Set](https://archive.ics.uci
 ### Run locally (from root folder):
 
 - Create virtual environment: `uv venv --python 3.12`
-- Install dependencies: `uv sync --all-groups`
+- Audit dependencies: `make audit`
+- Install dependencies: `make sync`
 - Launch backend: `make backend`
 - Launch front-end:
   - Native: [127.0.0.1:8080](http://127.0.0.1:8080/)
@@ -34,7 +35,7 @@ ML model based on [Somerville Happiness Survey Data Set](https://archive.ics.uci
 - Pre-commit: `make eval`
 - Unit tests: `make test`
 - Coverage badge: `make cov`
-- End-to-end build (eval + test + cov): `make build`
+- End-to-end build (audit + sync + eval + test + cov): `make build`
 
 ### Containers:
 

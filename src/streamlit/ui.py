@@ -137,7 +137,7 @@ def main() -> None:
 
     # Submit button centered
     st.markdown("<br>", unsafe_allow_html=True)
-    col1, col2, col3 = st.columns([4, 2, 4])
+    _, col2, _ = st.columns([4, 2, 4])
     with col2:
         predict_button = st.button(label="Submit your ratings")
 

@@ -111,7 +111,7 @@ class HappyModel:
                 / "model"
                 / self.model_fname_
             )
-        except Exception:
+        except (FileNotFoundError, OSError, ValueError, TypeError, EOFError):
             self.model = self._train_model()
             joblib.dump(
                 self.model,
@@ -135,7 +135,6 @@ class HappyModel:
             max_depth=3,
             max_features="sqrt",
             loss="log_loss",
-            criterion="friedman_mse",
             subsample=1.0,
             random_state=42,
         )

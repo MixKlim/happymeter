@@ -1,5 +1,3 @@
-SHELL=CMD
-
 help:
 	@echo "  backend           - Run the backend using uvicorn"
 	@echo "  frontend          - Run the frontend using Streamlit"
@@ -42,10 +40,10 @@ test:
 
 cov:
 	@echo "Creating coverage badge"
-	coverage report
-	coverage xml -o ./reports/coverage/coverage.xml
-	coverage html
-	genbadge coverage --output-file reports/coverage/coverage-badge.svg
+	uv run coverage report
+	uv run coverage xml -o ./reports/coverage/coverage.xml
+	uv run coverage html
+	uv run genbadge coverage --output-file reports/coverage/coverage-badge.svg
 
 build: audit sync eval test cov
 

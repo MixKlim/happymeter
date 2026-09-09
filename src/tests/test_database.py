@@ -89,7 +89,7 @@ def test_init_db_metadata_error(
     """
     mock_engine = MagicMock()
     mock_create_engine.return_value = mock_engine
-    mock_create_all.side_effect = Exception("Metadata error")
+    mock_create_all.side_effect = OperationalError("error", {}, None)
 
     result = init_db(mock_database_url)
 

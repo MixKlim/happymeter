@@ -1,11 +1,50 @@
-from sqlalchemy import Column, Float, Integer, create_engine
+import os
+from typing import Any, ClassVar
+
+from sqlalchemy import Column, Float, Integer, create_engine, event
+from sqlalchemy.engine import Engine
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy.schema import CreateSchema
 
 from src.app.logger import logger
 
 # Define the Base class for SQLAlchemy models
 Base: type[declarative_base] = declarative_base()
+
+
+def _get_app_schema(app_name: str | None, client_id: str | None) -> str | None:
+    if not app_name or not client_id:
+        return None
+    return f"{app_name}_schema_{client_id.replace('-', '')}"
+
+
+APP_SCHEMA = _get_app_schema(
+    os.environ.get("DATABRICKS_APP_NAME"), os.environ.get("DATABRICKS_CLIENT_ID")
+)
+
+
+def create_database_engine(database_url: str) -> Engine:
+    engine = create_engine(database_url)
+    endpoint_name = os.environ.get("ENDPOINT_NAME")
+    if endpoint_name:
+        from databricks.sdk import WorkspaceClient
+
+        workspace_client = WorkspaceClient()
+
+        @event.listens_for(engine, "do_connect")
+        def add_lakebase_oauth_token(
+            dialect: Any,
+            connection_record: Any,
+            cargs: list[Any],
+            cparams: dict[str, Any],
+        ) -> None:
+            credential = workspace_client.postgres.generate_database_credential(
+                endpoint=endpoint_name
+            )
+            cparams["password"] = credential.token
+
+    return engine
 
 
 class HappyPrediction(Base):
@@ -25,6 +64,7 @@ class HappyPrediction(Base):
     """
 
     __tablename__ = "happy_predictions"
+    __table_args__: ClassVar[dict] = {"schema": APP_SCHEMA}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     city_services = Column(Integer, nullable=False)
@@ -48,7 +88,10 @@ def init_db(DATABASE_URL: str) -> bool:
         bool: True if the database was initialized successfully, False otherwise.
     """
     try:
-        engine = create_engine(DATABASE_URL)
+        engine = create_database_engine(DATABASE_URL)
+        if APP_SCHEMA:
+            with engine.begin() as connection:
+                connection.execute(CreateSchema(APP_SCHEMA, if_not_exists=True))
         Base.metadata.create_all(engine)  # Create the table if it doesn't exist
         logger.info("Database initialized successfully!")
     except SQLAlchemyError as e:
@@ -70,7 +113,7 @@ def save_to_db(
         probability (float): The prediction probability.
     """
     try:
-        engine = create_engine(DATABASE_URL)
+        engine = create_database_engine(DATABASE_URL)
         SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
         session = SessionLocal()
 
@@ -107,7 +150,7 @@ def read_from_db(DATABASE_URL: str) -> list[HappyPrediction]:
         List[HappyPrediction]: All rows of a query result as instances of HappyPrediction.
     """
     try:
-        engine = create_engine(DATABASE_URL)
+        engine = create_database_engine(DATABASE_URL)
         SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
         session = SessionLocal()
 

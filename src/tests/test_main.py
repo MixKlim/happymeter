@@ -106,6 +106,28 @@ def test_get_database_url(env_vars: dict[str, str], expected_url: str) -> None:
         os.environ.update(original_env)
 
 
+def test_get_database_url_lakebase() -> None:
+    env_vars = {
+        "PGHOST": "lakebase.example.com",
+        "PGUSER": "app-client-id",
+        "PGDATABASE": "databricks_postgres",
+        "PGPORT": "5432",
+        "PGSSLMODE": "require",
+    }
+    original_env = dict(os.environ)
+    os.environ.clear()
+    os.environ.update(env_vars)
+
+    try:
+        assert get_database_url() == (
+            "postgresql+psycopg2://app-client-id@lakebase.example.com:5432/"
+            "databricks_postgres?sslmode=require"
+        )
+    finally:
+        os.environ.clear()
+        os.environ.update(original_env)
+
+
 @pytest.mark.asyncio
 async def test_root(client: httpx.AsyncClient) -> None:
     """Tests the root endpoint.

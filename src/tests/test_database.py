@@ -1,9 +1,20 @@
+import os
+from collections.abc import Callable
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
 from sqlalchemy.exc import OperationalError
 
-from src.app.database import HappyPrediction, init_db, read_from_db, save_to_db
+from src.app.database import (
+    CreateSchema,
+    HappyPrediction,
+    _get_app_schema,
+    create_database_engine,
+    init_db,
+    read_from_db,
+    save_to_db,
+)
 
 
 @pytest.fixture
@@ -15,6 +26,62 @@ def mock_database_url() -> str:
         str: A mock SQLite in-memory database URL.
     """
     return "sqlite:///:memory:"
+
+
+@pytest.mark.parametrize(
+    "app_name, client_id, expected_schema",
+    [
+        (None, "client-id", None),
+        (
+            "happymeter",
+            "client-id-with-hyphens",
+            "happymeter_schema_clientidwithhyphens",
+        ),
+    ],
+)
+def test_get_app_schema(
+    app_name: str | None, client_id: str | None, expected_schema: str | None
+) -> None:
+    assert _get_app_schema(app_name, client_id) == expected_schema
+
+
+def test_create_database_engine_adds_lakebase_oauth_token(
+    mock_database_url: str,
+) -> None:
+    listeners: list[Callable[..., None]] = []
+
+    def capture_listener(
+        target: Any,
+        identifier: str,
+    ) -> Callable[[Callable[..., None]], Callable[..., None]]:
+        def register(listener: Callable[..., None]) -> Callable[..., None]:
+            listeners.append(listener)
+            return listener
+
+        return register
+
+    mock_engine = MagicMock()
+    mock_client = MagicMock()
+    mock_client.postgres.generate_database_credential.return_value.token = "fresh-token"
+
+    with (
+        patch.dict(os.environ, {"ENDPOINT_NAME": "projects/p/branches/b/endpoints/e"}),
+        patch(
+            "src.app.database.create_engine", return_value=mock_engine
+        ) as mock_create_engine,
+        patch("src.app.database.event.listens_for", side_effect=capture_listener),
+        patch("databricks.sdk.WorkspaceClient", return_value=mock_client),
+    ):
+        engine = create_database_engine(mock_database_url)
+        connection_parameters: dict[str, Any] = {}
+        listeners[0](engine.dialect, None, [], connection_parameters)
+
+    assert engine is mock_engine
+    assert connection_parameters["password"] == "fresh-token"
+    mock_create_engine.assert_called_once_with(mock_database_url)
+    mock_client.postgres.generate_database_credential.assert_called_once_with(
+        endpoint="projects/p/branches/b/endpoints/e"
+    )
 
 
 # Test cases
@@ -47,6 +114,24 @@ def test_init_db_success(
 
     # Verify the logger was called with success message
     mock_logger.info.assert_called_once_with("Database initialized successfully!")
+
+
+def test_init_db_creates_app_schema(monkeypatch: pytest.MonkeyPatch) -> None:
+    app_schema = "happymeter_schema_clientid"
+    mock_engine = MagicMock()
+    mock_connection = mock_engine.begin.return_value.__enter__.return_value
+    monkeypatch.setattr("src.app.database.APP_SCHEMA", app_schema)
+
+    with (
+        patch("src.app.database.create_database_engine", return_value=mock_engine),
+        patch("src.app.database.Base.metadata.create_all") as mock_create_all,
+    ):
+        assert init_db("postgresql://test") is True
+
+    schema_statement = mock_connection.execute.call_args.args[0]
+    assert isinstance(schema_statement, CreateSchema)
+    assert schema_statement.element == app_schema
+    mock_create_all.assert_called_once_with(mock_engine)
 
 
 @patch("src.app.database.logger")

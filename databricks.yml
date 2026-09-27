@@ -1,0 +1,29 @@
+bundle:
+  name: happymeter
+
+resources:
+  postgres_projects:
+    lakebase_project:
+      project_id: happymeter
+      display_name: happymeter
+      default_branch: projects/happymeter/branches/production
+      lifecycle:
+        prevent_destroy: true
+  apps:
+    happymeter:
+      name: happymeter
+      description: Happiness prediction app
+      source_code_path: .
+      lifecycle:
+        started: true
+      resources:
+        - name: lakebase
+          postgres:
+            branch: projects/${resources.postgres_projects.lakebase_project.project_id}/branches/production
+            database: projects/happymeter/branches/production/databases/databricks-postgres
+            permission: CAN_CONNECT_AND_CREATE
+
+targets:
+  dev:
+    mode: development
+    default: true

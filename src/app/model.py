@@ -1,9 +1,11 @@
+import warnings
 from pathlib import Path
 
 import joblib
 import pandas as pd
 from pydantic import BaseModel, ConfigDict, Field
 from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.exceptions import InconsistentVersionWarning
 
 
 class SurveyMeasurement(BaseModel):
@@ -106,12 +108,21 @@ class HappyModel:
         )
         self.model_fname_ = model_fname
         try:
-            self.model = joblib.load(
-                Path(__file__).resolve().parent.parent.absolute()
-                / "model"
-                / self.model_fname_
-            )
-        except (FileNotFoundError, OSError, ValueError, TypeError, EOFError):
+            with warnings.catch_warnings():
+                warnings.simplefilter("error", InconsistentVersionWarning)
+                self.model = joblib.load(
+                    Path(__file__).resolve().parent.parent.absolute()
+                    / "model"
+                    / self.model_fname_
+                )
+        except (
+            FileNotFoundError,
+            OSError,
+            ValueError,
+            TypeError,
+            EOFError,
+            InconsistentVersionWarning,
+        ):
             self.model = self._train_model()
             joblib.dump(
                 self.model,

@@ -47,3 +47,18 @@ ML model based on [Somerville Happiness Survey Data Set](https://archive.ics.uci
 ### Deploy to Azure (Container Apps):
 
 - Run `bash deploy_azure.sh`
+
+### Deploy to Databricks Apps with DABs:
+
+1. Authenticate the Databricks CLI to the workspace:
+
+- `databricks auth login --host <workspace-url> --profile dev`
+
+2. Validate and deploy the bundle:
+
+- `databricks bundle validate --target dev --profile dev`
+- `databricks bundle deploy --target dev --profile dev`
+
+3. The bundle creates a `happymeter` Lakebase project and app, attaches the app to the `production` branch with `CAN_CONNECT_AND_CREATE`, and protects the project from bundle destruction. The app reads connection settings from the resource-provided `PGHOST`, `PGDATABASE`, `PGPORT`, `PGSSLMODE`, and `PGUSER` variables; no database password or connection string is stored in the repo.
+
+The app starts with `app.yaml` on `DATABRICKS_APP_PORT`. Locally, it continues to use SQLite unless PostgreSQL environment variables are set.

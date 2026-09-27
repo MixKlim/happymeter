@@ -1,8 +1,10 @@
+import warnings
 from unittest.mock import MagicMock, patch
 
 import numpy as np
 import pandas as pd
 import pytest
+from sklearn.exceptions import InconsistentVersionWarning
 
 from src.app.model import HappyModel, SurveyMeasurement
 
@@ -88,6 +90,44 @@ def test_happy_model_initialization_train_model(
     mock_read_csv.assert_called_once()
     mock_load.assert_called_once()
     mock_dump.assert_called_once()  # Ensure model is trained and saved
+
+
+@patch("pandas.read_csv")
+@patch("joblib.load")
+@patch("joblib.dump")
+def test_happy_model_retrains_for_inconsistent_pickle(
+    mock_dump: MagicMock, mock_load: MagicMock, mock_read_csv: MagicMock
+) -> None:
+    mock_read_csv.return_value = pd.DataFrame(
+        {
+            "happiness": [1, 0, 1],
+            "city_services": [3, 2, 4],
+            "housing_costs": [3, 3, 5],
+            "school_quality": [4, 2, 5],
+            "local_policies": [3, 1, 4],
+            "maintenance": [2, 4, 3],
+            "social_events": [5, 1, 4],
+        }
+    )
+
+    def load_inconsistent_pickle(model_path: object) -> None:
+        warnings.warn(
+            InconsistentVersionWarning(
+                estimator_name="GradientBoostingClassifier",
+                current_sklearn_version="1.9.1",
+                original_sklearn_version="1.9.0",
+            )
+        )
+
+    mock_load.side_effect = load_inconsistent_pickle
+
+    with warnings.catch_warnings(record=True) as emitted_warnings:
+        warnings.simplefilter("always")
+        model = HappyModel(data_fname="happy_data.csv", model_fname="stale_model.pkl")
+
+    assert emitted_warnings == []
+    assert model.model.__class__.__name__ == "GradientBoostingClassifier"
+    mock_dump.assert_called_once()
 
 
 # Test predict_happiness

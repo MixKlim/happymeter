@@ -10,6 +10,7 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from jinja2 import Environment, FileSystemLoader
+from sqlalchemy.engine import URL
 from sqlalchemy.exc import SQLAlchemyError
 
 from src.app import log_config
@@ -56,7 +57,16 @@ def get_database_url() -> str:
     Returns:
         str: The database URL to be used by the application.
     """
-    if os.environ.get("POSTGRES_HOST"):
+    if os.environ.get("PGHOST"):
+        return URL.create(
+            "postgresql+psycopg2",
+            username=os.environ.get("PGUSER"),
+            host=os.environ["PGHOST"],
+            port=int(os.environ.get("PGPORT", "5432")),
+            database=os.environ.get("PGDATABASE", "databricks_postgres"),
+            query={"sslmode": os.environ.get("PGSSLMODE", "require")},
+        ).render_as_string(hide_password=False)
+    elif os.environ.get("POSTGRES_HOST"):
         return f"postgresql://{os.environ['POSTGRES_USER']}:{os.environ['POSTGRES_PASSWORD']}@{os.environ['POSTGRES_HOST']}/{os.environ['POSTGRES_DB']}"
     else:
         DB_PATH = (
@@ -172,4 +182,9 @@ async def read_measurements(request: Request) -> HTMLResponse:
 
 
 if __name__ == "__main__":  # pragma: no cover
-    uvicorn.run(app, host="127.0.0.1", port=8000, log_config=log_config.LOGGING_CONFIG)
+    uvicorn.run(
+        app,
+        host=os.environ.get("UVICORN_HOST", "0.0.0.0"),
+        port=int(os.environ.get("DATABRICKS_APP_PORT", "8000")),
+        log_config=log_config.LOGGING_CONFIG,
+    )

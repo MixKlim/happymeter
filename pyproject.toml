@@ -47,7 +47,7 @@ backend = [
 ]
 
 [tool.uv]
-default-groups = []
+default-groups = ["backend"]
 
 [tool.pdm.build]
 includes = ["src/app"]

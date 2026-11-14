@@ -25,7 +25,7 @@ jobs:
           sudo apt-get install -y docker-compose
 
       - name: Build and start services
-        run: docker-compose up -d --build
+        run: docker compose up -d --build
 
       - name: Wait for backend to be ready
         run: |
@@ -46,11 +46,11 @@ jobs:
           done
 
       - name: Backend healthcheck
-        run: docker-compose logs backend | grep -q "Uvicorn running" || exit 1
+        run: docker compose logs backend | grep -q "Uvicorn running" || exit 1
 
       - name: Frontend healthcheck
         run: curl --fail http://localhost:8501/_stcore/health
 
       - name: Tear down Docker Compose
         if: always()
-        run: docker-compose down -v
+        run: docker compose down -v
